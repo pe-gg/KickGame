@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class PlayerAim : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] public float aimSensitivity;
+    private Vector2 _mouseDir;
+
+    private float _clamp = 89f;
+
+    private void Awake()
     {
         
     }
-
-    // Update is called once per frame
-    void Update()
+    private void LateUpdate()
     {
         
+    }
+    public void HandleMouseInput(Vector2 input)
+    {
+        _mouseDir = input * aimSensitivity;
     }
 }
