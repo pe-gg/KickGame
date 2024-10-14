@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-189308763501684970
+--- !u!114 &-4735538762233741561
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,9 +20,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GlassMaterial2
-  m_Shader: {fileID: -6465566751694194690, guid: 571083e3dcb9dd6468ed1d17629550c7, type: 3}
-  m_Parent: {fileID: -876546973899608171, guid: 571083e3dcb9dd6468ed1d17629550c7, type: 3}
+  m_Name: EmissiveMaterial
+  m_Shader: {fileID: -6465566751694194690, guid: cabaadcdcf610844fa953d397ca1680e, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: cabaadcdcf610844fa953d397ca1680e, type: 3}
   m_ModifiedSerializedProperties: 2
   m_ValidKeywords: []
   m_InvalidKeywords: []
