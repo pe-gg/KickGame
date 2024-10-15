@@ -223,7 +223,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -407,12 +407,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.47, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1043523878}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1043523873
 GameObject:
@@ -429,6 +429,7 @@ GameObject:
   - component: {fileID: 1043523874}
   - component: {fileID: 1043523879}
   - component: {fileID: 1043523880}
+  - component: {fileID: 1043523881}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -548,7 +549,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 963194228}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1043523879
@@ -563,7 +565,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fb0f1e504a49214cb37360c91a82d09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementSpeed: 1
+  _movementSpeed: 10
 --- !u!114 &1043523880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,11 +578,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 542e067afa4731740a0baba8205b1740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1043523881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1043523873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3af3897e921bb1943bd4daa12764537e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimSensitivity: 8
+  _camera: {fileID: 963194228}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 437146740}
   - {fileID: 1043523878}

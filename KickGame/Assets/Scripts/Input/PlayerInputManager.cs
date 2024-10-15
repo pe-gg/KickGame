@@ -13,7 +13,7 @@ public class PlayerInputManager : MonoBehaviour
     private void OnEnable()
     {
         playerController = GetComponent<PlayerMovement>();
-
+        playerAim = GetComponent<PlayerAim>();
 
         if (playerInput == null)
         {
