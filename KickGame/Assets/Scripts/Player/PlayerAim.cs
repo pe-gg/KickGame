@@ -13,7 +13,8 @@ public class PlayerAim : MonoBehaviour
 
     private void Awake()
     {
-        
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = false;
     }
     private void LateUpdate() //got lazy and copied this from a youtube tutorial... not ideal but needed to just get SOMETHING done
     {
