@@ -525,6 +525,10 @@ PrefabInstance:
       value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 3317921604407755611, guid: 644222179ab05ff40be53b099db1761e, type: 3}
+      propertyPath: showFieldOfView
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3317921604407755611, guid: 644222179ab05ff40be53b099db1761e, type: 3}
       propertyPath: patrolPoints.Array.data[0]
       value: 
       objectReference: {fileID: 1825289538}
