@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Manages player movement, interactions, and testing functionalities using CharacterController.
+/// Manages player movement, interactions, and camera rotation using CharacterController.
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -11,9 +11,11 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
 
+    [Header("Camera Settings")]
+    public Camera playerCamera;
+    public float mouseSensitivity = 100f;
+
     [Header("Testing Settings")]
-    public KeyCode toggleEnemyShootingKey = KeyCode.T;
-    public KeyCode toggleEnemyChasingKey = KeyCode.C;
     public KeyCode shootKey = KeyCode.F;
     public KeyCode stunEnemyKey = KeyCode.G;
 
@@ -25,17 +27,22 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
-    private bool enemyCanShoot = true;
-    private bool enemyCanChase = true;
+
+    // Mouse look variables
+    private float xRotation = 0f;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+
+        // Hide and lock the cursor
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
         HandleMovement();
+        HandleMouseLook();
         HandleTestingInputs();
     }
 
@@ -77,20 +84,29 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
+    /// Handles camera rotation based on mouse movement for first-person view.
+    /// </summary>
+    void HandleMouseLook()
+    {
+        // Get mouse input
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
+        // Rotate the player around the Y-axis
+        transform.Rotate(Vector3.up * mouseX);
+
+        // Rotate the camera around the X-axis
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // Limit vertical rotation
+
+        playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+    }
+
+    /// <summary>
     /// Handles inputs for testing enemy AI functionalities.
     /// </summary>
     void HandleTestingInputs()
     {
-        if (Input.GetKeyDown(toggleEnemyShootingKey))
-        {
-            ToggleEnemyShooting();
-        }
-
-        if (Input.GetKeyDown(toggleEnemyChasingKey))
-        {
-            ToggleEnemyChasing();
-        }
-
         if (Input.GetKeyDown(shootKey))
         {
             ShootAtEnemy();
@@ -103,39 +119,11 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggles the ability of enemies to shoot.
-    /// </summary>
-    void ToggleEnemyShooting()
-    {
-        enemyCanShoot = !enemyCanShoot;
-        EnemyAI[] enemies = FindObjectsOfType<EnemyAI>();
-        foreach (EnemyAI enemy in enemies)
-        {
-            enemy.canShoot = enemyCanShoot;
-        }
-        Debug.Log("Enemy shooting toggled: " + enemyCanShoot);
-    }
-
-    /// <summary>
-    /// Toggles the ability of enemies to chase the player.
-    /// </summary>
-    void ToggleEnemyChasing()
-    {
-        enemyCanChase = !enemyCanChase;
-        EnemyAI[] enemies = FindObjectsOfType<EnemyAI>();
-        foreach (EnemyAI enemy in enemies)
-        {
-            enemy.canChase = enemyCanChase;
-        }
-        Debug.Log("Enemy chasing toggled: " + enemyCanChase);
-    }
-
-    /// <summary>
-    /// Shoots a projectile towards the enemy.
+    /// Shoots a projectile towards where the camera is facing.
     /// </summary>
     void ShootAtEnemy()
     {
-        Instantiate(playerProjectilePrefab, firePoint.position, firePoint.rotation);
+        Instantiate(playerProjectilePrefab, firePoint.position, playerCamera.transform.rotation);
     }
 
     /// <summary>

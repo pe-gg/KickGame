@@ -47,26 +47,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3960b7183669f6449d834bbc3f8e50e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  ammoCapacity: 10
-  reloadTime: 2
-  canShoot: 1
-  canChase: 1
-  canFriendlyFire: 0
-  patrolPoints:
+  MaxHealth: 100
+  AmmoCapacity: 10
+  ReloadTime: 2
+  CanShoot: 1
+  CanChase: 1
+  CanFriendlyFire: 1
+  PatrolPoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  detectionRadius: 8.7
-  fieldOfViewAngle: 75.7
-  playerLayer:
+  DetectionRadius: 15
+  FieldOfViewAngle: 110
+  PlayerLayer:
     serializedVersion: 2
     m_Bits: 128
-  showFieldOfView: 1
-  projectilePrefab: {fileID: 2145972307954263533, guid: 4faa28c3bc7279246a2a8f795fe61aaa, type: 3}
-  firePoint: {fileID: 432416592301641274}
-  attackInterval: 1
+  ShowFieldOfView: 1
+  ProjectilePrefab: {fileID: 2145972307954263533, guid: 4faa28c3bc7279246a2a8f795fe61aaa, type: 3}
+  FirePoint: {fileID: 432416592301641274}
+  AttackInterval: 1
+  AttackRange: 9.28
 --- !u!195 &4266653727125267983
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -3,88 +3,157 @@ using UnityEngine.AI;
 using System.Collections;
 
 /// <summary>
-/// Controls the enemy behavior including patrolling, attacking, and reactions to damage.
+/// Controls the enemy behavior including patrolling, detecting the player,
+/// moving into range, attacking, and reactions to damage.
 /// </summary>
+[AddComponentMenu("AI/Enemy AI")]
 public class EnemyAI : MonoBehaviour
 {
-    // Enemy stats
+    #region Enemy Stats
+
     [Header("Enemy Stats")]
-    public int maxHealth = 100;
-    private int currentHealth;
-    public int ammoCapacity = 10;
-    private int currentAmmo;
-    public float reloadTime = 2f;
-    public bool canShoot = true; // Ability to shoot
-    public bool canChase = true; // Ability to chase
-    public bool canFriendlyFire = true; // Ability to shoot
+    [Tooltip("The maximum health of the enemy.")]
+    public int MaxHealth = 100;
 
-    // Movement and patrol
+    private int _currentHealth;
+
+    [Tooltip("The maximum ammo capacity of the enemy.")]
+    public int AmmoCapacity = 10;
+
+    private int _currentAmmo;
+
+    [Tooltip("The time it takes for the enemy to reload.")]
+    public float ReloadTime = 2f;
+
+    [Tooltip("Determines if the enemy can shoot.")]
+    public bool CanShoot = true;
+
+    [Tooltip("Determines if the enemy can chase the player.")]
+    public bool CanChase = true;
+
+    [Tooltip("Determines if the enemy can be damaged by friendly fire.")]
+    public bool CanFriendlyFire = true;
+
+    #endregion
+
+    #region Movement and Patrol
+
     [Header("Patrol Settings")]
-    public Transform[] patrolPoints;
-    private int currentPatrolIndex;
-    private NavMeshAgent agent;
+    [Tooltip("Points between which the enemy will patrol.")]
+    public Transform[] PatrolPoints;
 
-    // Detection
+    private int _currentPatrolIndex;
+
+    private NavMeshAgent _agent;
+
+    #endregion
+
+    #region Detection
+
     [Header("Detection Settings")]
-    public float detectionRadius = 15f;
-    public float fieldOfViewAngle = 110f;
-    public LayerMask playerLayer;
-    private GameObject player;
-    private bool playerInSight;
+    [Tooltip("The radius within which the enemy can detect the player.")]
+    public float DetectionRadius = 15f;
 
-    // Debugging
+    [Tooltip("The field of view angle for player detection.")]
+    public float FieldOfViewAngle = 110f;
+
+    [Tooltip("Layer mask to identify the player.")]
+    public LayerMask PlayerLayer;
+
+    private GameObject _player;
+
+    private bool _playerInSight;
+
+    #endregion
+
+    #region Debugging
+
     [Header("Debug Settings")]
-    public bool showFieldOfView = true; // Toggle to debug field of view
+    [Tooltip("Enable to visualize the enemy's field of view in the Scene view.")]
+    public bool ShowFieldOfView = true;
 
-    // Attack
+    #endregion
+
+    #region Attack
+
     [Header("Attack Settings")]
-    public GameObject projectilePrefab;
-    public Transform firePoint;
-    public float attackInterval = 1f;
-    private float attackTimer;
+    [Tooltip("The projectile prefab the enemy uses to attack.")]
+    public GameObject ProjectilePrefab;
 
-    // States
-    private enum State { Patrolling, Attacking, Stunned, Pain }
-    private State currentState;
+    [Tooltip("The point from which the enemy fires projectiles.")]
+    public Transform FirePoint;
 
-    // Components
-    private Animator animator;
-    private Rigidbody rb;
+    [Tooltip("Time interval between enemy attacks.")]
+    public float AttackInterval = 1f;
 
-    void Start()
+    [Tooltip("The range within which the enemy can attack the player.")]
+    public float AttackRange = 10f;
+
+    private float _attackTimer;
+
+    #endregion
+
+    #region States
+
+    private enum State
     {
-        currentHealth = maxHealth;
-        currentAmmo = ammoCapacity;
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        currentState = State.Patrolling;
-        agent.autoBraking = false;
-        GotoNextPatrolPoint();
-
-        Debug.Log($"{gameObject.name} initialized. Starting in state: {currentState}");
+        Patrolling,
+        Chasing,
+        Attacking,
+        Reloading,
+        Stunned,
+        Pain
     }
 
-    void Update()
+    private State _currentState;
+
+    #endregion
+
+    #region Components
+
+    private Animator _animator;
+
+    private Rigidbody _rigidbody;
+
+    #endregion
+
+    /// <summary>
+    /// Initializes the enemy.
+    /// </summary>
+    private void Start()
     {
-        switch (currentState)
+        _currentHealth = MaxHealth;
+        _currentAmmo = AmmoCapacity;
+        _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();
+        _rigidbody = GetComponent<Rigidbody>();
+        _player = GameObject.FindGameObjectWithTag("Player");
+        _currentState = State.Patrolling;
+        _agent.autoBraking = false;
+        MoveToNextPatrolPoint();
+
+        Debug.Log($"{gameObject.name} initialized. Starting in state: {_currentState}");
+    }
+
+    /// <summary>
+    /// Updates the enemy's behavior each frame.
+    /// </summary>
+    private void Update()
+    {
+        switch (_currentState)
         {
             case State.Patrolling:
                 Patrol();
                 DetectPlayer();
                 break;
+            case State.Chasing:
+                ChasePlayer();
+                break;
             case State.Attacking:
-                if (canChase)
-                {
-                    Attack();
-                }
-                else
-                {
-                    currentState = State.Patrolling;
-                    agent.isStopped = false;
-                    Debug.Log($"{gameObject.name} cannot chase. Returning to Patrolling state.");
-                }
+                Attack();
+                break;
+            case State.Reloading:
+                // Do nothing; wait for reloading to finish
                 break;
             case State.Stunned:
                 // Handle stunned behavior
@@ -98,49 +167,58 @@ public class EnemyAI : MonoBehaviour
     /// <summary>
     /// Moves the enemy to the next patrol point.
     /// </summary>
-    void GotoNextPatrolPoint()
+    private void MoveToNextPatrolPoint()
     {
-        if (patrolPoints.Length == 0)
+        if (PatrolPoints.Length == 0)
+        {
             return;
-        agent.destination = patrolPoints[currentPatrolIndex].position;
-        currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
+        }
+
+        _agent.destination = PatrolPoints[_currentPatrolIndex].position;
+        Debug.Log($"{gameObject.name} moving to patrol point {_currentPatrolIndex}");
+        _currentPatrolIndex = (_currentPatrolIndex + 1) % PatrolPoints.Length;
     }
 
     /// <summary>
     /// Handles the patrolling behavior.
     /// </summary>
-    void Patrol()
+    private void Patrol()
     {
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
-            GotoNextPatrolPoint();
+        if (!_agent.pathPending && _agent.remainingDistance < 0.5f)
+        {
+            MoveToNextPatrolPoint();
+        }
     }
 
     /// <summary>
     /// Detects the player within the detection radius and field of view.
     /// </summary>
-    void DetectPlayer()
+    private void DetectPlayer()
     {
-        if (!canChase)
+        if (!CanChase)
+        {
             return;
+        }
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
+        Collider[] hits = Physics.OverlapSphere(transform.position, DetectionRadius, PlayerLayer);
         foreach (var hit in hits)
         {
-            if (hit.gameObject == player)
+            if (hit.gameObject == _player)
             {
-                Vector3 direction = (player.transform.position - transform.position).normalized;
+                Vector3 direction = (_player.transform.position - transform.position).normalized;
                 float angle = Vector3.Angle(direction, transform.forward);
 
-                if (angle < fieldOfViewAngle * 0.5f)
+                if (angle < FieldOfViewAngle * 0.5f)
                 {
                     RaycastHit raycastHit;
-                    if (Physics.Raycast(transform.position + Vector3.up, direction, out raycastHit, detectionRadius))
+                    if (Physics.Raycast(transform.position + Vector3.up, direction, out raycastHit, DetectionRadius))
                     {
-                        if (raycastHit.collider.gameObject == player)
+                        if (raycastHit.collider.gameObject == _player)
                         {
-                            playerInSight = true;
-                            currentState = State.Attacking;
-                            agent.isStopped = true;
+                            _playerInSight = true;
+                            _currentState = State.Chasing;
+                            _agent.isStopped = false;
+                            Debug.Log($"{gameObject.name} detected player. Switching to Chasing state.");
                             break;
                         }
                     }
@@ -150,18 +228,60 @@ public class EnemyAI : MonoBehaviour
     }
 
     /// <summary>
+    /// Chases the player to get within attack range.
+    /// </summary>
+    private void ChasePlayer()
+    {
+        if (!CanChase)
+        {
+            _currentState = State.Patrolling;
+            _agent.isStopped = false;
+            Debug.Log($"{gameObject.name} cannot chase. Returning to Patrolling state.");
+            return;
+        }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
+
+        if (distanceToPlayer <= AttackRange)
+        {
+            // Within attack range, switch to attacking
+            _currentState = State.Attacking;
+            _agent.isStopped = true;
+            Debug.Log($"{gameObject.name} is within attack range. Switching to Attacking state.");
+        }
+        else
+        {
+            // Move towards player
+            _agent.isStopped = false;
+            _agent.SetDestination(_player.transform.position);
+        }
+    }
+
+    /// <summary>
     /// Handles the attacking behavior.
     /// </summary>
-    void Attack()
+    private void Attack()
     {
-        if (!canShoot)
+        if (!CanShoot)
         {
             Debug.Log($"{gameObject.name} cannot shoot. Attack aborted.");
             return;
         }
 
+        // Check if player is still within attack range
+        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
+
+        if (distanceToPlayer > AttackRange)
+        {
+            // Player moved out of range, start chasing
+            _currentState = State.Chasing;
+            _agent.isStopped = false;
+            Debug.Log($"{gameObject.name} lost attack range. Switching to Chasing state.");
+            return;
+        }
+
         // Rotate towards the player
-        Vector3 direction = (player.transform.position - transform.position).normalized;
+        Vector3 direction = (_player.transform.position - transform.position).normalized;
         direction.y = 0; // Keep only horizontal rotation
         if (direction != Vector3.zero)
         {
@@ -169,18 +289,20 @@ public class EnemyAI : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
 
-        attackTimer += Time.deltaTime;
+        _attackTimer += Time.deltaTime;
 
-        if (currentAmmo > 0)
+        if (_currentAmmo > 0)
         {
-            if (attackTimer >= attackInterval)
+            if (_attackTimer >= AttackInterval)
             {
                 Shoot();
-                attackTimer = 0f;
+                _attackTimer = 0f;
             }
         }
         else
         {
+            // Start reloading
+            _currentState = State.Reloading;
             StartCoroutine(Reload());
         }
     }
@@ -188,19 +310,48 @@ public class EnemyAI : MonoBehaviour
     /// <summary>
     /// Shoots a projectile towards the player.
     /// </summary>
-    void Shoot()
+    private void Shoot()
     {
-        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
-        currentAmmo--;
+        GameObject projectileInstance = Instantiate(ProjectilePrefab, FirePoint.position, FirePoint.rotation);
+        Projectile projectileScript = projectileInstance.GetComponent<Projectile>();
+        if (projectileScript != null)
+        {
+            // Initialize the projectile
+            projectileScript.Initialize(
+                shooterObject: this.gameObject,
+                hitSelf: false,
+                layer: LayerMask.NameToLayer("Projectile")
+            );
+
+            // Assign target tags
+            projectileScript.targetTags = new string[] { "Player" };
+        }
+        _currentAmmo--;
+        Debug.Log($"{gameObject.name} fired a shot. Ammo remaining: {_currentAmmo}");
     }
 
     /// <summary>
     /// Reloads the enemy's ammo after a delay.
     /// </summary>
-    IEnumerator Reload()
+    private IEnumerator Reload()
     {
-        yield return new WaitForSeconds(reloadTime);
-        currentAmmo = ammoCapacity;
+        Debug.Log($"{gameObject.name} is reloading.");
+        // While reloading, enemy should not move
+        _agent.isStopped = true;
+        yield return new WaitForSeconds(ReloadTime);
+        _currentAmmo = AmmoCapacity;
+        Debug.Log($"{gameObject.name} reloaded. Ammo refilled to {_currentAmmo}");
+        // After reloading, decide whether to attack or chase
+        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
+        if (distanceToPlayer <= AttackRange)
+        {
+            _currentState = State.Attacking;
+        }
+        else
+        {
+            _currentState = State.Chasing;
+            _agent.isStopped = false;
+        }
     }
 
     /// <summary>
@@ -209,10 +360,10 @@ public class EnemyAI : MonoBehaviour
     /// <param name="force">The force to apply.</param>
     public void ApplyKnockback(Vector3 force)
     {
-        rb.AddForce(force, ForceMode.Impulse);
-        currentState = State.Stunned;
+        _rigidbody.AddForce(force, ForceMode.Impulse);
+        _currentState = State.Stunned;
         Debug.Log($"{gameObject.name} received knockback. Switching to Stunned state.");
-        // Handle stun duration and transition back to patrolling or attacking
+        // Optionally, handle stun duration and transition back to previous state
     }
 
     /// <summary>
@@ -221,17 +372,17 @@ public class EnemyAI : MonoBehaviour
     /// <param name="damage">Amount of damage.</param>
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-        Debug.Log($"{gameObject.name} took {damage} damage. Current health: {currentHealth}");
-        if (currentHealth <= 0)
+        _currentHealth -= damage;
+        Debug.Log($"{gameObject.name} took {damage} damage. Current health: {_currentHealth}");
+        if (_currentHealth <= 0)
         {
             Die();
         }
         else
         {
-            currentState = State.Pain;
+            _currentState = State.Pain;
             Debug.Log($"{gameObject.name} in Pain state.");
-            // Handle pain animation and transition back to previous state
+            // Optionally, handle pain animation and transition back to previous state
         }
     }
 
@@ -241,35 +392,44 @@ public class EnemyAI : MonoBehaviour
     /// <param name="duration">Duration of the stun in seconds.</param>
     public void ApplyStun(float duration)
     {
-        if (currentState != State.Stunned)
+        if (_currentState != State.Stunned)
         {
             StartCoroutine(StunCoroutine(duration));
         }
     }
 
+    /// <summary>
+    /// Coroutine to handle the stun effect over time.
+    /// </summary>
+    /// <param name="duration">Duration of the stun.</param>
+    /// <returns>IEnumerator</returns>
     private IEnumerator StunCoroutine(float duration)
     {
-        currentState = State.Stunned;
-        agent.isStopped = true;
+        _currentState = State.Stunned;
+        _agent.isStopped = true;
         Debug.Log($"{gameObject.name} is stunned for {duration} seconds.");
-        // Play stun animation if available
+        // Optionally, play stun animation if available
         yield return new WaitForSeconds(duration);
-        agent.isStopped = false;
-        currentState = State.Patrolling;
+        _agent.isStopped = false;
+        _currentState = State.Patrolling;
         Debug.Log($"{gameObject.name} recovered from stun. Returning to Patrolling state.");
     }
 
     /// <summary>
     /// Handles enemy death.
     /// </summary>
-    void Die()
+    private void Die()
     {
-        // Play death animation and destroy enemy object
         Debug.Log($"{gameObject.name} died.");
+        // Optionally, play death animation before destroying
         Destroy(gameObject);
     }
 
-    void OnTriggerEnter(Collider other)
+    /// <summary>
+    /// Called when the enemy enters a trigger collider.
+    /// </summary>
+    /// <param name="other">The collider entered.</param>
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Hazard"))
         {
@@ -284,31 +444,38 @@ public class EnemyAI : MonoBehaviour
     /// <param name="damage">Damage received.</param>
     public void FriendlyFire(int damage)
     {
-        if(!canFriendlyFire) return;
-        
+        if (!CanFriendlyFire)
+        {
+            return;
+        }
+
         Debug.Log($"{gameObject.name} hit by friendly fire. Damage: {damage}");
         TakeDamage(damage);
-        // Optionally change target to the enemy that shot
+        // Optionally, change target to the enemy that shot
     }
 
     /// <summary>
     /// Draws debug visuals in the Scene view.
     /// </summary>
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
-        if (showFieldOfView)
+        if (ShowFieldOfView)
         {
             // Draw detection radius
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, detectionRadius);
+            Gizmos.DrawWireSphere(transform.position, DetectionRadius);
 
             // Draw field of view lines
-            Vector3 leftBoundary = Quaternion.Euler(0, -fieldOfViewAngle * 0.5f, 0) * transform.forward;
-            Vector3 rightBoundary = Quaternion.Euler(0, fieldOfViewAngle * 0.5f, 0) * transform.forward;
+            Vector3 leftBoundary = Quaternion.Euler(0, -FieldOfViewAngle * 0.5f, 0) * transform.forward;
+            Vector3 rightBoundary = Quaternion.Euler(0, FieldOfViewAngle * 0.5f, 0) * transform.forward;
 
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.position, transform.position + leftBoundary * detectionRadius);
-            Gizmos.DrawLine(transform.position, transform.position + rightBoundary * detectionRadius);
+            Gizmos.DrawLine(transform.position, transform.position + leftBoundary * DetectionRadius);
+            Gizmos.DrawLine(transform.position, transform.position + rightBoundary * DetectionRadius);
+
+            // Optionally, draw attack range
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, AttackRange);
         }
     }
 }

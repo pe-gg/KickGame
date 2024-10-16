@@ -512,6 +512,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 27131149}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &2054479867 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 3021435476022421686, guid: c24a93541eee413419f8a0b8870126a6, type: 3}
+  m_PrefabInstance: {fileID: 5258150030405197952}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &476681305605674099
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -525,23 +530,19 @@ PrefabInstance:
       value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 3317921604407755611, guid: 644222179ab05ff40be53b099db1761e, type: 3}
-      propertyPath: showFieldOfView
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3317921604407755611, guid: 644222179ab05ff40be53b099db1761e, type: 3}
-      propertyPath: patrolPoints.Array.data[0]
+      propertyPath: PatrolPoints.Array.data[0]
       value: 
       objectReference: {fileID: 1825289538}
     - target: {fileID: 3317921604407755611, guid: 644222179ab05ff40be53b099db1761e, type: 3}
-      propertyPath: patrolPoints.Array.data[1]
+      propertyPath: PatrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 919515759}
     - target: {fileID: 3317921604407755611, guid: 644222179ab05ff40be53b099db1761e, type: 3}
-      propertyPath: patrolPoints.Array.data[2]
+      propertyPath: PatrolPoints.Array.data[2]
       value: 
       objectReference: {fileID: 1982440952}
     - target: {fileID: 3317921604407755611, guid: 644222179ab05ff40be53b099db1761e, type: 3}
-      propertyPath: patrolPoints.Array.data[3]
+      propertyPath: PatrolPoints.Array.data[3]
       value: 
       objectReference: {fileID: 1135208162}
     - target: {fileID: 6812623530119252783, guid: 644222179ab05ff40be53b099db1761e, type: 3}
@@ -600,6 +601,14 @@ PrefabInstance:
     - target: {fileID: 469056960324504613, guid: c24a93541eee413419f8a0b8870126a6, type: 3}
       propertyPath: m_Name
       value: Dummy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8510361060838550153, guid: c24a93541eee413419f8a0b8870126a6, type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 2054479867}
+    - target: {fileID: 8510361060838550153, guid: c24a93541eee413419f8a0b8870126a6, type: 3}
+      propertyPath: mouseSensitivity
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 8536578300849155091, guid: c24a93541eee413419f8a0b8870126a6, type: 3}
       propertyPath: m_LocalPosition.x
