@@ -612,7 +612,8 @@ MonoBehaviour:
     m_Bits: 64
   _checkSize: 0.1
   _checkDist: 1
-  _jumpForce: 5
+  _jumpForce: 4
+  _jumpCancelWindow: 0.5
 --- !u!114 &1043523883
 MonoBehaviour:
   m_ObjectHideFlags: 0

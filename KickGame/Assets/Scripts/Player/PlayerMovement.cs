@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
+        VelocityDampen();
     }
 
     public void HandleMovementInput(Vector2 input)
@@ -26,6 +27,29 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         Vector3 _horiz = (transform.right * _movement.x + transform.forward * _movement.y) * _movementSpeed;
-        _rb.AddForce(_horiz * (Mathf.Lerp(0f, _movementSpeed, _friction)) * Time.fixedDeltaTime, ForceMode.Force);
+        _rb.AddForce(_horiz * (Mathf.Clamp(Mathf.Lerp(_movementSpeed, 0f, _friction), 0f, 20f)) * Time.fixedDeltaTime, ForceMode.Force);
+    }
+
+    private void VelocityDampen() 
+    {
+        float xSlow = _rb.velocity.x;
+        float zSlow = _rb.velocity.z;
+        if(_movement.x == 0)
+        {
+            xSlow = 0f;
+        }
+        else
+        {
+            xSlow = _rb.velocity.x;
+        }
+        if(_movement.y == 0)
+        {
+            zSlow = 0f;
+        }
+        else
+        {
+            zSlow = _rb.velocity.z;
+        }
+        _rb.velocity = new Vector3(Mathf.Lerp(_rb.velocity.x, xSlow, 0.1f), _rb.velocity.y, Mathf.Lerp(_rb.velocity.z, zSlow, 0.1f));
     }
 }

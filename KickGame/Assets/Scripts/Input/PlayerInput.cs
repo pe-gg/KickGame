@@ -156,12 +156,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Jump"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""8d18326b-4166-469e-9f98-c67fb800f9fc"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Action1"",

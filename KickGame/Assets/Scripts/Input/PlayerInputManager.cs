@@ -26,6 +26,7 @@ public class PlayerInputManager : MonoBehaviour
             playerInput.Mouselook.MouseY.performed += i => mouseVector.y = i.ReadValue<float>();
 
             playerInput.PlayerActions.Jump.performed += i => playerJump?.Jump();
+            playerInput.PlayerActions.Jump.canceled += i => playerJump?.JumpCancel();
         }
 
         playerInput.Enable();

@@ -8,6 +8,7 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private float _checkSize;
     [SerializeField] private float _checkDist;
     [SerializeField] private float _jumpForce;
+    [SerializeField] private float _jumpCancelWindow;
     private PlayerState _state;
     private Rigidbody _rb;
     public bool grounded { get; private set; }
@@ -42,9 +43,18 @@ public class PlayerJump : MonoBehaviour
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
     }
 
+    public void JumpCancel()
+    {
+        if (_jumpStarted)
+        {
+            Debug.Log("cancelled");
+            _rb.velocity = new Vector3(_rb.velocity.x, (-_jumpForce * 0.5f), _rb.velocity.z);
+        }
+    }
+
     private IEnumerator TempJumpDisable()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(_jumpCancelWindow);
         _jumpStarted = false;
         StopCoroutine("TempJumpDisable");
     }
