@@ -26,4 +26,9 @@ public class FauxGravity : MonoBehaviour
         _localGrav = Mathf.Clamp(_localGrav, 0f, Mathf.Clamp(_gravity * 100f, 0f, 10000f));
         _rb.AddForce(Vector3.down * _localGrav, ForceMode.Acceleration);
     }
+
+    public void ResetLocalGravity()
+    {
+        _localGrav = 0f;
+    }
 }

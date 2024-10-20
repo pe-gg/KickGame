@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 public class PlayerJump : MonoBehaviour
 {
@@ -9,14 +10,21 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private float _checkDist;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _jumpCancelWindow;
+    [SerializeField] private float _wallJumpRadius;
     private PlayerState _state;
     private Rigidbody _rb;
+    private FauxGravity _grav;
     public bool grounded { get; private set; }
     private bool _jumpStarted;
     private void Awake()
     {
         _state = GetComponent<PlayerState>();
         _rb = GetComponent<Rigidbody>();
+        _grav = GetComponent<FauxGravity>();
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(this.transform.position, _wallJumpRadius);
     }
     private void FixedUpdate()
     {
@@ -35,7 +43,7 @@ public class PlayerJump : MonoBehaviour
     {
         if (!grounded || _jumpStarted)
         {
-            Debug.Log("Invalid Jump!");
+            WallJump();
             return;
         }
         _jumpStarted = true;
@@ -49,6 +57,24 @@ public class PlayerJump : MonoBehaviour
         {
             Debug.Log("cancelled");
             _rb.velocity = new Vector3(_rb.velocity.x, (-_jumpForce * 0.5f), _rb.velocity.z);
+        }
+    }
+
+    private void WallJump()
+    {
+        RaycastHit hit;
+        Collider[] walls = Physics.OverlapSphere(this.transform.position, _wallJumpRadius, _mask);
+        if (walls[0] == null)
+        {
+            Debug.Log("Walljump attempted, but failed");
+            return;
+        }
+        Vector3 dir = walls[0].transform.position - this.transform.position;
+        if (Physics.Raycast(this.transform.position, dir, out hit, 100f, _mask))
+        {
+            _grav.ResetLocalGravity();
+            _rb.AddForce(_jumpForce * hit.normal, ForceMode.Impulse);
+            _rb.AddForce(_jumpForce * 1.5f * Vector3.up, ForceMode.Impulse);
         }
     }
 
