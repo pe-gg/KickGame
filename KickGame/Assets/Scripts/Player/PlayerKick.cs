@@ -77,7 +77,7 @@ public class PlayerKick : MonoBehaviour
     {
         Debug.Log("Enemy kicked!");
         en.ApplyStun(1f);
-        en.ApplyKnockback(_cam.transform.forward * _kickForce);
+        en.ApplyKnockback(_cam.transform.forward * _kickForce / 4);
     }
 
     /// <summary>
