@@ -16,4 +16,17 @@ public class PlayerState : MonoBehaviour
     {
         currentState = PState.DEFAULT;
     }
+
+    public void SwitchState(int state)
+    {
+        currentState = (PState)state;
+    }
+
+    public bool CompareState(int state)
+    {
+        if (currentState == (PState)state)
+            return true;
+        else
+            return false;
+    }
 }

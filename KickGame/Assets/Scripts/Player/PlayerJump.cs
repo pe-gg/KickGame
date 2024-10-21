@@ -33,6 +33,10 @@ public class PlayerJump : MonoBehaviour
         RaycastHit hit;
         if(Physics.SphereCast(this.transform.position, _checkSize, Vector3.down, out hit, _checkDist, _mask))
         {
+            if (!grounded)
+            {
+                _state.SwitchState(0);
+            }
             grounded = true;
         }
         else
@@ -47,6 +51,7 @@ public class PlayerJump : MonoBehaviour
             return;
         }
         _jumpStarted = true;
+        _state.SwitchState(0);
         StartCoroutine("TempJumpDisable");
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
     }
@@ -55,7 +60,6 @@ public class PlayerJump : MonoBehaviour
     {
         if (_jumpStarted)
         {
-            Debug.Log("cancelled");
             _rb.velocity = new Vector3(_rb.velocity.x, (-_jumpForce * 0.5f), _rb.velocity.z);
         }
     }
