@@ -21,6 +21,7 @@ public class PlayerKick : MonoBehaviour
     private Rigidbody _rb;
     private PlayerMovement _move;
     private PlayerDiveKickCollider _col;
+    private ViewmodelAnimator _anim;
 
     private Quaternion _camClamped;
     #endregion
@@ -31,6 +32,7 @@ public class PlayerKick : MonoBehaviour
         _grav = GetComponent<FauxGravity>();
         _rb = GetComponent<Rigidbody>();
         _move = GetComponent<PlayerMovement>();
+        _anim = GetComponent<ViewmodelAnimator>();
         _col = _cam.gameObject.GetComponentInChildren<PlayerDiveKickCollider>();
         _camClamped = Quaternion.Euler(Mathf.Clamp(_cam.transform.localEulerAngles.x, -89f, 0f), _cam.transform.localEulerAngles.y, _cam.transform.localEulerAngles.z);
     }
@@ -55,6 +57,7 @@ public class PlayerKick : MonoBehaviour
     /// </summary>
     private void GroundKick()
     {
+        _anim.GroundKick();
         RaycastHit hit;
         if (Physics.Raycast(this.transform.position, _cam.transform.forward, out hit, _kickRange))
         {
@@ -74,6 +77,7 @@ public class PlayerKick : MonoBehaviour
         if (_diving)
             return;
         _rb.velocity = new Vector3(_rb.velocity.x / 2f, 0f, _rb.velocity.z / 2f);
+        _anim.DiveKickStart();
         _rb.AddForce(Vector3.up * _kickJump, ForceMode.Impulse);
         Debug.Log("Divekick");
         _state.currentState = PlayerState.PState.DIVEKICKING;
@@ -113,6 +117,7 @@ public class PlayerKick : MonoBehaviour
             yield return new WaitForFixedUpdate();
             }
         _col.gameObject.SetActive(false);
+        _anim.DiveKickEnd();
         Debug.Log("Divekick complete!");
         _diveKickTimeout = 600;
         bool enable = false;
