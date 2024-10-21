@@ -412,6 +412,7 @@ public class EnemyAI : MonoBehaviour
         yield return new WaitForSeconds(duration);
         _agent.isStopped = false;
         _currentState = State.Patrolling;
+        _rigidbody.velocity = Vector3.zero;
         Debug.Log($"{gameObject.name} recovered from stun. Returning to Patrolling state.");
     }
 

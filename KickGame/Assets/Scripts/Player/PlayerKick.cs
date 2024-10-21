@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// Handles kicking actions associated with the Mouse1 input.
@@ -61,12 +62,22 @@ public class PlayerKick : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(this.transform.position, _cam.transform.forward, out hit, _kickRange))
         {
+            EnemyAI enemyHit = hit.transform.GetComponentInParent<EnemyAI>();
+            if (enemyHit != null)
+                EnemyKnockback(enemyHit);
             Rigidbody rbHit = hit.transform.GetComponent<Rigidbody>();
             if (rbHit == null)
                 return;
             rbHit.AddForce(_cam.transform.forward * _kickForce, ForceMode.Impulse);
             Debug.Log("Kick success!");
         }
+    }
+
+    private void EnemyKnockback(EnemyAI en)
+    {
+        Debug.Log("Enemy kicked!");
+        en.ApplyStun(1f);
+        en.ApplyKnockback(_cam.transform.forward * _kickForce);
     }
 
     /// <summary>

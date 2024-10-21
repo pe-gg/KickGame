@@ -28,6 +28,10 @@ public class PlayerDiveKickCollider : MonoBehaviour
             _state.currentState = PlayerState.PState.JUMPING;
             _rb.velocity = Vector3.zero;
             _rb.AddForce(Vector3.up * _kickHitForce, ForceMode.Impulse);
+            EnemyAI en = other.GetComponentInParent<EnemyAI>();
+            if (en == null)
+                return;
+            en.ApplyStun(2f);
         }
     }
 }
