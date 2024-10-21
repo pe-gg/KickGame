@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// Handles kicking actions associated with the Mouse1 input.
+/// </summary>
 public class PlayerKick : MonoBehaviour
 {
+    #region Variables
     [SerializeField] private float _kickRange;
     [SerializeField] private float _kickForce;
     [SerializeField] private float _diveKickSpeed;
@@ -16,8 +20,10 @@ public class PlayerKick : MonoBehaviour
     private FauxGravity _grav;
     private Rigidbody _rb;
     private PlayerMovement _move;
+    private PlayerDiveKickCollider _col;
 
     private Quaternion _camClamped;
+    #endregion
     private void Awake()
     {
         _cam = GetComponentInChildren<Camera>();
@@ -25,12 +31,16 @@ public class PlayerKick : MonoBehaviour
         _grav = GetComponent<FauxGravity>();
         _rb = GetComponent<Rigidbody>();
         _move = GetComponent<PlayerMovement>();
+        _col = _cam.gameObject.GetComponentInChildren<PlayerDiveKickCollider>();
         _camClamped = Quaternion.Euler(Mathf.Clamp(_cam.transform.localEulerAngles.x, -89f, 0f), _cam.transform.localEulerAngles.y, _cam.transform.localEulerAngles.z);
     }
 
+    /// <summary>
+    /// Called by PlayerInputManager. If the player is in the air, divekick. Otherwise, ground kick.
+    /// </summary>
     public void Kick()
     {
-        if (_state.CompareState(1)) //1 = jumping
+        if (_state.currentState == PlayerState.PState.JUMPING) 
         {
             DiveKick();
         }
@@ -39,7 +49,10 @@ public class PlayerKick : MonoBehaviour
             GroundKick();
         }
     }
-
+    /// <summary>
+    /// Does a raycast and checks if the component has a rigidbody. If so, apply force to the rigidbody in the direction that the player's camera is facing.
+    /// Implementation is currently very basic and WIP.
+    /// </summary>
     private void GroundKick()
     {
         RaycastHit hit;
@@ -53,11 +66,14 @@ public class PlayerKick : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initiates the divekick sequence. Thrusts the player upwards, sets the playerstate to divekicking, etc.
+    /// </summary>
     private void DiveKick()
     {
         if (_diving)
             return;
-        _rb.velocity = new Vector3(_rb.velocity.x / 0.5f, 0f, _rb.velocity.z / 0.5f);
+        _rb.velocity = new Vector3(_rb.velocity.x / 2f, 0f, _rb.velocity.z / 2f);
         _rb.AddForce(Vector3.up * _kickJump, ForceMode.Impulse);
         Debug.Log("Divekick");
         _state.currentState = PlayerState.PState.DIVEKICKING;
@@ -68,11 +84,19 @@ public class PlayerKick : MonoBehaviour
         Invoke("DiveStart", 0.33f);
     }
 
+    /// <summary>
+    /// Enables divekick collider and starts the divekick coroutine.
+    /// </summary>
     private void DiveStart()
     {
+        _col.gameObject.SetActive(true);
         StartCoroutine("DiveKickLoop");
     }
 
+    /// <summary>
+    /// Thrusts the player downwards and forwards relative to their facing direction. 
+    /// If the player does not collide with anything for 10 seconds, exits automatically.
+    /// </summary>
     private IEnumerator DiveKickLoop()
     {
         while (_diving)
@@ -81,25 +105,20 @@ public class PlayerKick : MonoBehaviour
             _rb.AddForce(_diveKickSpeed * _cam.transform.forward, ForceMode.Impulse);
             _rb.AddForce(_diveKickSpeed * 0.75f * Vector3.down, ForceMode.Impulse);
             _diveKickTimeout--;
-            if (_diveKickTimeout <= 0 || _state.currentState == PlayerState.PState.DEFAULT)
+            if (_diveKickTimeout <= 0 || _state.currentState != PlayerState.PState.DIVEKICKING)
             {
                 _diving = false;
                 break;
             }
             yield return new WaitForFixedUpdate();
             }
+        _col.gameObject.SetActive(false);
         Debug.Log("Divekick complete!");
         _diveKickTimeout = 600;
-        _state.currentState = PlayerState.PState.DEFAULT; //just in case
         bool enable = false;
         _grav.TempDisableGravity(enable);
         _move.LockMovement(enable);
         _move.TempSlow();
         yield return new WaitForFixedUpdate();
-    }
-
-    private void DiveKickBounce()
-    {
-
     }
  }

@@ -315,6 +315,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8346829528488494140, guid: 644222179ab05ff40be53b099db1761e, type: 3}
+      propertyPath: m_TagString
+      value: Kickable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -806,7 +810,7 @@ GameObject:
   - component: {fileID: 1043523885}
   m_Layer: 7
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1332,13 +1336,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1992248987}
   - component: {fileID: 1992248988}
+  - component: {fileID: 1992248989}
   m_Layer: 0
   m_Name: DiveKickCol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1992248987
 Transform:
   m_ObjectHideFlags: 0
@@ -1375,6 +1380,19 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1992248989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992248986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0076f619b881c445abdd34d59c5f46c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _kickHitForce: 15
 --- !u!1 &2061017719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1390,7 +1408,7 @@ GameObject:
   - component: {fileID: 2061017720}
   m_Layer: 6
   m_Name: PhysCube
-  m_TagString: Untagged
+  m_TagString: Kickable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

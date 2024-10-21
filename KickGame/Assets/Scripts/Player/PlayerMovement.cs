@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles functions relating to the player's WASD input.
+/// </summary>
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float _movementSpeed = 100f;
@@ -22,11 +25,19 @@ public class PlayerMovement : MonoBehaviour
         VelocityDampen();
     }
 
+    /// <summary>
+    /// Parse user input from PlayerInputManager.
+    /// </summary>
     public void HandleMovementInput(Vector2 input)
     {
         _movement = input;
     }
 
+    /// <summary>
+    /// Adds force to the rigidbody. relative to the player's input.
+    /// Uses forces instead of setting velocity directly so that the player can have multiple forces applied to it at once.
+    /// Could use more work, as the player feels very 'slippery' currently.
+    /// </summary>
     private void Move()
     {
         if (_lock)
@@ -35,6 +46,9 @@ public class PlayerMovement : MonoBehaviour
         _rb.AddForce(_horiz * (Mathf.Clamp(Mathf.Lerp(_movementSpeed, 0f, _friction), 0f, 20f)) * Time.fixedDeltaTime, ForceMode.Force);
     }
 
+    /// <summary>
+    /// If the player isn't pressing an input, lerp the corresponding velocity to 0.
+    /// </summary>
     private void VelocityDampen() 
     {
         float xSlow = _rb.velocity.x;
@@ -57,11 +71,17 @@ public class PlayerMovement : MonoBehaviour
         }
         _rb.velocity = new Vector3(Mathf.Lerp(_rb.velocity.x, xSlow, 0.1f), _rb.velocity.y, Mathf.Lerp(_rb.velocity.z, zSlow, 0.1f));
     }
+    /// <summary>
+    /// Used by external scripts to lock movement if it is undesired (i.e. If a player is divekicking, then movement input should not be enabled).
+    /// </summary>
     public void LockMovement(bool set)
     {
         _lock = set;
     }
 
+    /// <summary>
+    /// This is kinda gross, but it's a function to slow the player down after a divekick ends. Otherwise, they'd be going way too fast.
+    /// </summary>
     public void TempSlow()
     {
         _slow = true;

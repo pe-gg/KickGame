@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Used as a 'hub' for scripts to reference what state the player is in.
+/// </summary>
 public class PlayerState : MonoBehaviour
 {
     public enum PState
@@ -15,18 +18,5 @@ public class PlayerState : MonoBehaviour
     private void Awake()
     {
         currentState = PState.DEFAULT;
-    }
-
-    public void SwitchState(int state)
-    {
-        currentState = (PState)state;
-    }
-
-    public bool CompareState(int state)
-    {
-        if (currentState == (PState)state)
-            return true;
-        else
-            return false;
     }
 }
