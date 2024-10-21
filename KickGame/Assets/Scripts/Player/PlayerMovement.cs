@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float _movementSpeed = 100f;
     [SerializeField] private float _friction = 0.2f;
+    [SerializeField] private float _speedCap;
+    private float _defaultSpeedCap;
     private Rigidbody _rb;
     private Vector2 _movement;
     private bool _lock;
@@ -17,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _defaultSpeedCap = _speedCap;
     }
 
     private void FixedUpdate()
@@ -40,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void Move()
     {
+        _rb.velocity = new Vector3(Mathf.Clamp(_rb.velocity.x, -_speedCap, _speedCap), _rb.velocity.y, Mathf.Clamp(_rb.velocity.z, -_speedCap, _speedCap));
         if (_lock)
             return;
         Vector3 _horiz = (transform.right * _movement.x + transform.forward * _movement.y) * _movementSpeed;
@@ -78,29 +82,16 @@ public class PlayerMovement : MonoBehaviour
     {
         _lock = set;
     }
-
     /// <summary>
-    /// This is kinda gross, but it's a function to slow the player down after a divekick ends. Otherwise, they'd be going way too fast.
+    /// 
     /// </summary>
-    public void TempSlow()
+    public void MultiplySpeedCap(float cap)
     {
-        _slow = true;
-        StartCoroutine("SlowTimer");
+        _speedCap = _speedCap * cap;
+    }
+    public void ResetSpeedCap()
+    {
+        _speedCap = _defaultSpeedCap;
     }
 
-    private IEnumerator SlowTimer()
-    {
-        float x = _rb.velocity.x;
-        float z = _rb.velocity.z;
-        while (_slow)
-        {
-            _rb.velocity = new Vector3(Mathf.Lerp(_rb.velocity.x, x / 4, 0.75f), _rb.velocity.y, Mathf.Lerp(_rb.velocity.z, z / 4, 0.75f));
-            _slowTime--;
-            if (_slowTime <= 0)
-                break;
-            yield return new WaitForFixedUpdate();
-        }
-        _slow = false;
-        yield return new WaitForFixedUpdate();
-    }
 }

@@ -225,6 +225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movementSpeed: 50
   _friction: 0.1
+  _speedCap: 15
 --- !u!114 &4571658989284872187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,7 +269,7 @@ MonoBehaviour:
     m_Bits: 64
   _checkSize: 0.1
   _checkDist: 1
-  _jumpForce: 4
+  _jumpForce: 5
   _jumpCancelWindow: 0.5
   _wallJumpRadius: 1
 --- !u!114 &6596778483071446991
