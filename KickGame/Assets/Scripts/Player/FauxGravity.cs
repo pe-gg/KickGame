@@ -6,6 +6,7 @@ public class FauxGravity : MonoBehaviour
 {
     [SerializeField] private float _gravity;
     private float _localGrav;
+    private bool _disable = false;
     private PlayerJump _groundcheck;
     private Rigidbody _rb;
 
@@ -17,7 +18,7 @@ public class FauxGravity : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_groundcheck.grounded)
+        if (_groundcheck.grounded || _disable)
         {
             _localGrav = _gravity;
             return;
@@ -25,6 +26,11 @@ public class FauxGravity : MonoBehaviour
         _localGrav = _localGrav + _gravity * 1.5f;
         _localGrav = Mathf.Clamp(_localGrav, 0f, Mathf.Clamp(_gravity * 100f, 0f, 10000f));
         _rb.AddForce(Vector3.down * _localGrav, ForceMode.Acceleration);
+    }
+
+    public void TempDisableGravity(bool set)
+    {
+        _disable = set;
     }
 
     public void ResetLocalGravity()

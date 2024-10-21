@@ -24,18 +24,17 @@ public class PlayerJump : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawSphere(this.transform.position, _wallJumpRadius);
+        Gizmos.DrawWireSphere(this.transform.position, _wallJumpRadius);
     }
     private void FixedUpdate()
     {
-        if (_jumpStarted)
-            return;
         RaycastHit hit;
         if(Physics.SphereCast(this.transform.position, _checkSize, Vector3.down, out hit, _checkDist, _mask))
         {
             if (!grounded)
             {
-                _state.SwitchState(0);
+                _state.currentState = PlayerState.PState.DEFAULT;
+                _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
             }
             grounded = true;
         }
@@ -51,7 +50,7 @@ public class PlayerJump : MonoBehaviour
             return;
         }
         _jumpStarted = true;
-        _state.SwitchState(0);
+        _state.currentState = PlayerState.PState.JUMPING;
         StartCoroutine("TempJumpDisable");
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
     }
@@ -66,6 +65,8 @@ public class PlayerJump : MonoBehaviour
 
     private void WallJump()
     {
+        if (_state.currentState != PlayerState.PState.JUMPING)
+            return;
         RaycastHit hit;
         Collider[] walls = Physics.OverlapSphere(this.transform.position, _wallJumpRadius, _mask);
         if (walls[0] == null)
