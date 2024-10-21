@@ -95,6 +95,7 @@ public class PlayerJump : MonoBehaviour
         Vector3 dir = walls[0].transform.position - this.transform.position;
         if (Physics.Raycast(this.transform.position, dir, out hit, 100f, _mask))
         {
+            _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
             _grav.ResetLocalGravity();
             _rb.AddForce(_jumpForce * 2f * hit.normal, ForceMode.Impulse);
             _rb.AddForce(_jumpForce * 1.5f * Vector3.up, ForceMode.Impulse);

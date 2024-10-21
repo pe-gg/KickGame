@@ -87,7 +87,7 @@ public class PlayerKick : MonoBehaviour
     {
         if (_diving)
             return;
-        _rb.velocity = new Vector3(_rb.velocity.x / 2f, 0f, _rb.velocity.z / 2f);
+        _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
         _anim.DiveKickStart();
         _rb.AddForce(Vector3.up * _kickJump, ForceMode.Impulse);
         Debug.Log("Divekick");
@@ -96,6 +96,7 @@ public class PlayerKick : MonoBehaviour
         bool disable = true;
         _grav.TempDisableGravity(disable);
         _move.LockMovement(disable);
+        _move.MultiplySpeedCap(2f);
         Invoke("DiveStart", 0.33f);
     }
 
@@ -134,7 +135,7 @@ public class PlayerKick : MonoBehaviour
         bool enable = false;
         _grav.TempDisableGravity(enable);
         _move.LockMovement(enable);
-        _move.TempSlow();
+        _move.ResetSpeedCap();
         yield return new WaitForFixedUpdate();
     }
  }
