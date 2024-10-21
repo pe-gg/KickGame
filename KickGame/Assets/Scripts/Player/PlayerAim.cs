@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles the player's mouse input and converts it into camera aiming.
+/// </summary>
 public class PlayerAim : MonoBehaviour
 {
     [SerializeField] public float aimSensitivity;

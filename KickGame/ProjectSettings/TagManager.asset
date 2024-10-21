@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Hazard
   - Enemy
+  - Kickable
   layers:
   - Default
   - TransparentFX
