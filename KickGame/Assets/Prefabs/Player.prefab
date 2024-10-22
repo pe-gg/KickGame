@@ -340,6 +340,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _arm: {fileID: 7280503058471309923, guid: ce283b47cd8debc448871266cb5797ea, type: 3}
+  _armThrowForce: 20
+  HasArm: 1
 --- !u!1 &6011827915513296945
 GameObject:
   m_ObjectHideFlags: 0
