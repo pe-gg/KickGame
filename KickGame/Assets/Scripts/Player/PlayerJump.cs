@@ -56,7 +56,7 @@ public class PlayerJump : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        if (!grounded || _jumpStarted)
+        if (!grounded || _jumpStarted || _state.currentState == PlayerState.PState.JUMPING)
         {
             WallJump();
             return;
@@ -97,7 +97,7 @@ public class PlayerJump : MonoBehaviour
         {
             _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
             _grav.ResetLocalGravity();
-            _rb.AddForce(_jumpForce * 2f * hit.normal, ForceMode.Impulse);
+            _rb.AddForce(_jumpForce * 3f * hit.normal, ForceMode.Impulse);
             _rb.AddForce(_jumpForce * 1.5f * Vector3.up, ForceMode.Impulse);
         }
     }
