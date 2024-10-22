@@ -36,9 +36,10 @@ public class Projectile : MonoBehaviour
                 {
                     Debug.LogWarning("TODO:  Player hit ");
                     // Handle player damage
-                    PlayerController player = hitObject.GetComponent<PlayerController>();
+                    PlayerHealth player = hitObject.GetComponent<PlayerHealth>(); // I changed this from PlayerController to PlayerHealth
                     if (player != null)
                     {
+                        player.TakeDamage(damage);
                     }
                 }
                 else if (tag == "Enemy")
