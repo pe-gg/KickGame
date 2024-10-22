@@ -8,6 +8,7 @@ public class PlayerInputManager : MonoBehaviour
     private PlayerAim playerAim;
     private PlayerJump playerJump;
     private PlayerKick playerKick;
+    private PlayerArm playerArm;
 
     PlayerInput playerInput;
     Vector2 mouseVector;
@@ -18,6 +19,7 @@ public class PlayerInputManager : MonoBehaviour
         playerAim = GetComponent<PlayerAim>();
         playerJump = GetComponent<PlayerJump>();
         playerKick = GetComponent<PlayerKick>();
+        playerArm = GetComponent<PlayerArm>();
 
         if (playerInput == null)
         {
@@ -31,6 +33,7 @@ public class PlayerInputManager : MonoBehaviour
             playerInput.PlayerActions.Jump.canceled += i => playerJump?.JumpCancel();
 
             playerInput.PlayerActions.Action1.performed += i => playerKick.Kick();
+            playerInput.PlayerActions.Action2.performed += i => playerArm.ArmThrow();
         }
 
         playerInput.Enable();
