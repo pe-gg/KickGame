@@ -2962,6 +2962,10 @@ PrefabInstance:
       propertyPath: regenerationInterval
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3776917755321845193, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 1660128794}
     - target: {fileID: 5709787375315458387, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: m_Name
       value: Player
