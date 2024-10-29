@@ -89,6 +89,7 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("The range within which the enemy can attack the player.")]
     public float AttackRange = 10f;
 
+    public float StunGroundCheckDistance = 55f;
     private float _attackTimer;
 
     #endregion
@@ -135,6 +136,7 @@ public class EnemyAI : MonoBehaviour
         Debug.Log($"{gameObject.name} initialized. Starting in state: {_currentState}");
     }
 
+
     /// <summary>
     /// Updates the enemy's behavior each frame.
     /// </summary>
@@ -164,6 +166,24 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if the enemy is on the ground.
+    /// </summary>
+    /// <returns>True if the enemy is on the ground, false otherwise.</returns>
+    private bool CheckForGround()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, StunGroundCheckDistance))
+        {
+            Debug.Log($"{gameObject.name} found ground and can recover.");
+            return true;
+        }
+        Debug.Log($"{gameObject.name} is not on the ground yet.");
+        return false;
+    }
+    
+
+    
     /// <summary>
     /// Moves the enemy to the next patrol point.
     /// </summary>
@@ -411,13 +431,26 @@ public class EnemyAI : MonoBehaviour
         Debug.Log($"{gameObject.name} is stunned for {duration} seconds.");
         // Optionally, play stun animation if available
         yield return new WaitForSeconds(duration);
+        if (CheckForGround())
+        {
+            RecoverFromStun();
+        }
+    }
+    
+    /// <summary>
+    /// Recovers the enemy from stun.
+    /// </summary>
+    private void RecoverFromStun()
+    {
         _agent.enabled = true;
         _agent.isStopped = false;
+        // Reset velocity 
+        _agent.velocity = Vector3.zero; 
+        _rigidbody.velocity = Vector3.zero; 
         _currentState = State.Patrolling;
-        _rigidbody.velocity = Vector3.zero;
         Debug.Log($"{gameObject.name} recovered from stun. Returning to Patrolling state.");
     }
-
+    
     /// <summary>
     /// Handles enemy death.
     /// </summary>
