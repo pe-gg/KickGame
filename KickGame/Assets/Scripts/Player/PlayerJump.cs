@@ -78,7 +78,7 @@ public class PlayerJump : MonoBehaviour
     {
         if (_jumpStarted)
         {
-            _rb.velocity = new Vector3(_rb.velocity.x, (-_jumpForce * 0.5f), _rb.velocity.z);
+            //_rb.velocity = new Vector3(_rb.velocity.x, (-_jumpForce * 0.5f), _rb.velocity.z);
         }
     }
 

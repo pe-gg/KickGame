@@ -228,6 +228,7 @@ MonoBehaviour:
   _movementSpeed: 50
   _friction: 0.1
   _speedCap: 15
+  _turnSpeed: 3
 --- !u!114 &4571658989284872187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,11 +270,12 @@ MonoBehaviour:
   _mask:
     serializedVersion: 2
     m_Bits: 64
-  _checkSize: 0.1
+  _checkSize: 0.05
   _checkDist: 1
   _jumpForce: 5
   _jumpCancelWindow: 0.5
   _wallJumpRadius: 1
+  _wallJumpAmount: 3
 --- !u!114 &6596778483071446991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,6 +305,7 @@ MonoBehaviour:
   _kickForce: 15
   _diveKickSpeed: 2
   _kickJump: 5
+  _kickCooldownSeconds: 1
 --- !u!114 &3055929301128008343
 MonoBehaviour:
   m_ObjectHideFlags: 0
