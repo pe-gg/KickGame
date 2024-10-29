@@ -14,8 +14,10 @@ public class PlayerKick : MonoBehaviour
     [SerializeField] private float _kickForce;
     [SerializeField] private float _diveKickSpeed;
     [SerializeField] private float _kickJump;
+    [SerializeField] private float _kickCooldownSeconds;
     private int _diveKickTimeout = 600;
     private bool _diving = false;
+    private bool _kicking = false;
     private Camera _cam;
     private PlayerState _state;
     private FauxGravity _grav;
@@ -49,7 +51,10 @@ public class PlayerKick : MonoBehaviour
         }
         else
         {
+            if (_kicking)
+                return;
             GroundKick();
+            StartCoroutine(KickCooldown((int)_kickCooldownSeconds * 60));
         }
     }
     /// <summary>
@@ -136,6 +141,23 @@ public class PlayerKick : MonoBehaviour
         _grav.TempDisableGravity(enable);
         _move.LockMovement(enable);
         _move.ResetSpeedCap();
+        yield return new WaitForFixedUpdate();
+    }
+
+    private IEnumerator KickCooldown(int time)
+    {
+        _kicking = true;
+        int kickTimer = time;
+        while (_kicking)
+        {
+            kickTimer--;
+            if(kickTimer <= 0)
+            {
+                _kicking = false;
+                break;
+            }
+            yield return new WaitForFixedUpdate();
+        }
         yield return new WaitForFixedUpdate();
     }
  }

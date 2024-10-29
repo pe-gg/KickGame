@@ -2946,6 +2946,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: _kickCooldownSeconds
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2918936704987368506, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: healthBar
       value: 

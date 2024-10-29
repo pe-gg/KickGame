@@ -15,6 +15,8 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _jumpCancelWindow;
     [SerializeField] private float _wallJumpRadius;
+    [SerializeField] private int _wallJumpAmount = 3;
+    private int _wallJumpAmountDefault;
     private PlayerState _state;
     private Rigidbody _rb;
     private FauxGravity _grav;
@@ -26,6 +28,7 @@ public class PlayerJump : MonoBehaviour
         _state = GetComponent<PlayerState>();
         _rb = GetComponent<Rigidbody>();
         _grav = GetComponent<FauxGravity>();
+        _wallJumpAmountDefault = _wallJumpAmount;
     }
     private void OnDrawGizmos()
     {
@@ -45,6 +48,7 @@ public class PlayerJump : MonoBehaviour
                 _state.currentState = PlayerState.PState.DEFAULT;
                 _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
             }
+            _wallJumpAmount = _wallJumpAmountDefault;
             grounded = true;
         }
         else
@@ -83,11 +87,11 @@ public class PlayerJump : MonoBehaviour
     /// </summary>
     private void WallJump()
     {
-        if (_state.currentState != PlayerState.PState.JUMPING)
+        if (_state.currentState != PlayerState.PState.JUMPING || _wallJumpAmount <= 0)
             return;
         RaycastHit hit;
         Collider[] walls = Physics.OverlapSphere(this.transform.position, _wallJumpRadius, _mask);
-        if (walls[0] == null)
+        if (walls.Length == 0)
         {
             Debug.Log("Walljump attempted, but failed");
             return;
@@ -96,6 +100,7 @@ public class PlayerJump : MonoBehaviour
         if (Physics.Raycast(this.transform.position, dir, out hit, 100f, _mask))
         {
             _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
+            _wallJumpAmount--;
             _grav.ResetLocalGravity();
             _rb.AddForce(_jumpForce * 3f * hit.normal, ForceMode.Impulse);
             _rb.AddForce(_jumpForce * 1.5f * Vector3.up, ForceMode.Impulse);
