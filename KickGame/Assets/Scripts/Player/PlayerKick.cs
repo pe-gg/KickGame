@@ -65,8 +65,11 @@ public class PlayerKick : MonoBehaviour
     {
         _anim.GroundKick();
         RaycastHit hit;
-        if (Physics.Raycast(this.transform.position, _cam.transform.forward, out hit, _kickRange))
+        if (Physics.Raycast(this.transform.position, _cam.transform.forward, out hit, _kickRange)) //NOTE TO SELF: SWITCH TO USING AN INTERFACE INSTEAD OF BEING LAZY
         {
+            ExplodingBox box = hit.transform.GetComponent<ExplodingBox>();
+            if (box != null)
+                box.Kick(transform.forward);
             EnemyAI enemyHit = hit.transform.GetComponentInParent<EnemyAI>();
             if (enemyHit != null)
                 EnemyKnockback(enemyHit);

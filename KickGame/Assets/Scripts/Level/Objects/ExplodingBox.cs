@@ -32,6 +32,11 @@ public class ExplodingBox : BasicBox
             Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                EnemyAI en = nearbyObject.GetComponent<EnemyAI>(); //this doesn't work! replace later with interface check
+                if (en != null)
+                {
+                    en.ApplyStun(3f);
+                }
                 rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
             }
         }

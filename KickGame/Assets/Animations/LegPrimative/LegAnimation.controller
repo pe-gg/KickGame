@@ -107,7 +107,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FullKickAN
-  m_Speed: 6
+  m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 3537093161472737401}
