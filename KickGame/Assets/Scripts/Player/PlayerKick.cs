@@ -160,4 +160,10 @@ public class PlayerKick : MonoBehaviour
         }
         yield return new WaitForFixedUpdate();
     }
+
+
+    public bool IsKicking()
+    {
+        return _kicking;
+    }
  }
