@@ -12,6 +12,7 @@ public class ArmProjectile : MonoBehaviour
         _arm = GameObject.Find("Player").GetComponent<PlayerArm>();
         _trigger = GetComponentInChildren<CapsuleCollider>();
         Invoke("ColliderEnable", 0.5f);
+        Destroy(this.gameObject, 30f);
     }
     private void ColliderEnable()
     {

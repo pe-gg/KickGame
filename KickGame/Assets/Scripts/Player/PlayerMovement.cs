@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -10,21 +11,37 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _movementSpeed = 100f;
     [SerializeField] private float _friction = 0.2f;
     [SerializeField] private float _speedCap;
+    [SerializeField] private float _turnSpeed;
+    private float _defaultTurnSpeed;
     private float _defaultSpeedCap;
     private Rigidbody _rb;
+    private PlayerState _state;
     private Vector2 _movement;
+    private bool _airborne = false;
     private bool _lock;
     private bool _slow;
-    private int _slowTime = 30;
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _state = GetComponent<PlayerState>();
         _defaultSpeedCap = _speedCap;
+        _defaultTurnSpeed = _turnSpeed;
     }
 
     private void FixedUpdate()
     {
+        /*if (_state.currentState == PlayerState.PState.JUMPING && !_airborne)
+        {
+            _airborne = true;
+            _turnSpeed = _defaultTurnSpeed / _turnSpeed;
+        }
+        else if (_state.currentState == PlayerState.PState.DEFAULT)
+        {
+            _airborne = false;
+            _turnSpeed = _defaultTurnSpeed;
+        }*/
         Move();
+        CapSpeed();
         VelocityDampen();
     }
 
@@ -43,11 +60,26 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        _rb.velocity = new Vector3(Mathf.Clamp(_rb.velocity.x, -_speedCap, _speedCap), _rb.velocity.y, Mathf.Clamp(_rb.velocity.z, -_speedCap, _speedCap));
         if (_lock)
             return;
-        Vector3 _horiz = (transform.right * _movement.x + transform.forward * _movement.y) * _movementSpeed;
+        Vector2 newMove = _movement;
+        /*if (_movement.x * _rb.velocity.x < 0f)
+        {
+            newMove.x = _movement.x * _turnSpeed;
+        }
+        if (_movement.y * _rb.velocity.z < 0f)
+        {
+            newMove.y = _movement.y * _turnSpeed;
+        }*/
+        Vector3 _horiz = (transform.right * newMove.x + transform.forward * newMove.y) * _movementSpeed;
         _rb.AddForce(_horiz * (Mathf.Clamp(Mathf.Lerp(_movementSpeed, 0f, _friction), 0f, 20f)) * Time.fixedDeltaTime, ForceMode.Force);
+    }
+    /// <summary>
+    /// Keeps the player's rigidbody velocity from going too high.
+    /// </summary>
+    private void CapSpeed()
+    {
+        _rb.velocity = new Vector3(Mathf.Clamp(_rb.velocity.x, -_speedCap, _speedCap), _rb.velocity.y, Mathf.Clamp(_rb.velocity.z, -_speedCap, _speedCap));
     }
 
     /// <summary>
@@ -74,6 +106,7 @@ public class PlayerMovement : MonoBehaviour
             zSlow = _rb.velocity.z;
         }
         _rb.velocity = new Vector3(Mathf.Lerp(_rb.velocity.x, xSlow, 0.1f), _rb.velocity.y, Mathf.Lerp(_rb.velocity.z, zSlow, 0.1f));
+        
     }
     /// <summary>
     /// Used by external scripts to lock movement if it is undesired (i.e. If a player is divekicking, then movement input should not be enabled).
