@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        /*if (_state.currentState == PlayerState.PState.JUMPING && !_airborne)
+        if (_state.currentState == PlayerState.PState.JUMPING && !_airborne)
         {
             _airborne = true;
             _turnSpeed = _defaultTurnSpeed / _turnSpeed;
@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         {
             _airborne = false;
             _turnSpeed = _defaultTurnSpeed;
-        }*/
+        }
         Move();
         CapSpeed();
         VelocityDampen();
@@ -63,14 +63,14 @@ public class PlayerMovement : MonoBehaviour
         if (_lock)
             return;
         Vector2 newMove = _movement;
-        /*if (_movement.x * _rb.velocity.x < 0f)
+        if (_movement.x * _rb.velocity.x < 0f)
         {
             newMove.x = _movement.x * _turnSpeed;
         }
         if (_movement.y * _rb.velocity.z < 0f)
         {
             newMove.y = _movement.y * _turnSpeed;
-        }*/
+        }
         Vector3 _horiz = (transform.right * newMove.x + transform.forward * newMove.y) * _movementSpeed;
         _rb.AddForce(_horiz * (Mathf.Clamp(Mathf.Lerp(_movementSpeed, 0f, _friction), 0f, 20f)) * Time.fixedDeltaTime, ForceMode.Force);
     }
@@ -87,25 +87,12 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void VelocityDampen() 
     {
-        float xSlow = _rb.velocity.x;
-        float zSlow = _rb.velocity.z;
-        if(_movement.x == 0)
+        float xSlow = transform.forward.x;
+        float zSlow = transform.forward.z;
+        if(_movement.magnitude <= 0.01f)
         {
-            xSlow = 0f;
+            _rb.velocity = Vector3.Lerp(_rb.velocity, new Vector3(0, _rb.velocity.y, 0), 0.1f);
         }
-        else
-        {
-            xSlow = _rb.velocity.x;
-        }
-        if(_movement.y == 0)
-        {
-            zSlow = 0f;
-        }
-        else
-        {
-            zSlow = _rb.velocity.z;
-        }
-        _rb.velocity = new Vector3(Mathf.Lerp(_rb.velocity.x, xSlow, 0.1f), _rb.velocity.y, Mathf.Lerp(_rb.velocity.z, zSlow, 0.1f));
         
     }
     /// <summary>
