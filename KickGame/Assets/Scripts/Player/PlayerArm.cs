@@ -6,6 +6,7 @@ public class PlayerArm : MonoBehaviour
 {
     [SerializeField] private ArmProjectile _arm;
     [SerializeField] private float _armThrowForce;
+
     private Camera _cam;
     private ViewmodelAnimator _anim;
     public bool HasArm = true;
@@ -22,4 +23,5 @@ public class PlayerArm : MonoBehaviour
         ArmProjectile newArm = Instantiate(_arm, _cam.transform.position, Quaternion.Euler(90f, 0f, 0f));
         newArm.GetComponent<Rigidbody>().AddForce(_cam.transform.forward * _armThrowForce, ForceMode.Impulse);
     }
+
 }

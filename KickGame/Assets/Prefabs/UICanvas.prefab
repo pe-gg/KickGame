@@ -95,8 +95,9 @@ GameObject:
   - component: {fileID: 3960736009762390364}
   - component: {fileID: 7270656410517920355}
   - component: {fileID: 6110919735285912699}
+  - component: {fileID: 474391940387382726}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,6 +188,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &474391940387382726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3379474241538934816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25bc505f28c24af48bd93244d13fa78a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armOnUI: {fileID: 6253224231341777548}
+  armOffUI: {fileID: 9060882002861390231}
+  arm: {fileID: 0}
 --- !u!1 &5260308662586947634
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,7 +580,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6771e35ed7198474a832cdbacf7d969d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 827799fe014882b4da1e5dd3685a3247, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
