@@ -208,7 +208,10 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     private void Patrol()
     {
-       
+        if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("Patrol"))
+        {
+            _animator.SetTrigger("Patrol");
+        }
 
         if (!_agent.pathPending && _agent.remainingDistance < 0.5f)
         {

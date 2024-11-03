@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6812623530119252783}
-  - component: {fileID: 3317921604407755611}
-  - component: {fileID: 4266653727125267983}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -34,62 +32,6 @@ Transform:
   - {fileID: 85150711584305041}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3317921604407755611
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1948120282143438329}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3960b7183669f6449d834bbc3f8e50e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxHealth: 100
-  AmmoCapacity: 10
-  ReloadTime: 2
-  CanShoot: 1
-  CanChase: 1
-  CanFriendlyFire: 1
-  PatrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  DetectionRadius: 15
-  FieldOfViewAngle: 110
-  PlayerLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  ShowFieldOfView: 1
-  ProjectilePrefab: {fileID: 2145972307954263533, guid: 4faa28c3bc7279246a2a8f795fe61aaa, type: 3}
-  FirePoint: {fileID: 432416592301641274}
-  AttackInterval: 1
-  AttackRange: 9.28
-  StunGroundCheckDistance: 55
---- !u!195 &4266653727125267983
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1948120282143438329}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1.74
-  m_BaseOffset: 0.87
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!1 &5269283584025789165
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,7 +437,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
       propertyPath: m_Name
-      value: Idle
+      value: Robot
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 1092408308860062549, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -806,6 +752,12 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 7631252915457769546}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3148311549931566376}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 612838107546165765}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
       insertIndex: -1
@@ -821,6 +773,62 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
   m_PrefabInstance: {fileID: 478574958015400058}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7631252915457769546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749098038234641707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3960b7183669f6449d834bbc3f8e50e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxHealth: 100
+  AmmoCapacity: 10
+  ReloadTime: 2
+  CanShoot: 1
+  CanChase: 1
+  CanFriendlyFire: 1
+  PatrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  DetectionRadius: 15
+  FieldOfViewAngle: 110
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  ShowFieldOfView: 1
+  ProjectilePrefab: {fileID: 2145972307954263533, guid: 4faa28c3bc7279246a2a8f795fe61aaa, type: 3}
+  FirePoint: {fileID: 432416592301641274}
+  AttackInterval: 1
+  AttackRange: 9.28
+  StunGroundCheckDistance: 55
+--- !u!195 &3148311549931566376
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749098038234641707}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.74
+  m_BaseOffset: 0.87
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!65 &612838107546165765
 BoxCollider:
   m_ObjectHideFlags: 0
