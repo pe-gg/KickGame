@@ -291,6 +291,10 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     private void Attack()
     {
+        if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("Shoot"))
+        {
+            _animator.SetTrigger("Shoot");
+        }
         if (!CanShoot)
         {
             Debug.Log($"{gameObject.name} cannot shoot. Attack aborted.");
