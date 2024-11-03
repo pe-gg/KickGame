@@ -9,6 +9,9 @@ using System.Collections;
 [AddComponentMenu("AI/Enemy AI")]
 public class EnemyAI : MonoBehaviour
 {
+   
+
+
     #region Enemy Stats
 
     [Header("Enemy Stats")]
@@ -123,6 +126,7 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     private void Start()
     {
+       
         _currentHealth = MaxHealth;
         _currentAmmo = AmmoCapacity;
         _agent = GetComponent<NavMeshAgent>();
@@ -204,6 +208,8 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     private void Patrol()
     {
+       
+
         if (!_agent.pathPending && _agent.remainingDistance < 0.5f)
         {
             MoveToNextPatrolPoint();
