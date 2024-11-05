@@ -163,6 +163,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: 
   isActive: 1
-  kickForce: 10
+  kickForce: 5
   explosionForce: 500
-  explosionRadius: 155
+  explosionRadius: 10

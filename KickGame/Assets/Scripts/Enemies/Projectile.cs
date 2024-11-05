@@ -19,6 +19,12 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject, lifeTime); // Destroy the projectile after a set time
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.layer == 6)
+            Destroy(gameObject);
+    }
+
     void OnTriggerEnter(Collider hitInfo)
     {
         GameObject hitObject = hitInfo.gameObject;

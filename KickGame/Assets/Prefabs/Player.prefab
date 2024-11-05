@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0076f619b881c445abdd34d59c5f46c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _kickHitForce: 15
+  _kickHitForce: 20
 --- !u!1 &5709787375315458387
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,6 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aimSensitivity: 8
+  _clamp: 89
   _camera: {fileID: 1112460153143277794}
 --- !u!114 &6990899059357931115
 MonoBehaviour:
@@ -272,7 +273,7 @@ MonoBehaviour:
     m_Bits: 64
   _checkSize: 0.05
   _checkDist: 1
-  _jumpForce: 5
+  _jumpForce: 9
   _jumpCancelWindow: 0.5
   _wallJumpRadius: 1
   _wallJumpAmount: 3
@@ -288,7 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3cb8b1ae47fee44997ac3df629223a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gravity: 0.25
+  _gravity: 2
 --- !u!114 &424534444953843213
 MonoBehaviour:
   m_ObjectHideFlags: 0

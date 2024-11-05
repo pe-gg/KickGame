@@ -52,7 +52,11 @@ public class PlayerJump : MonoBehaviour
             grounded = true;
         }
         else
+        {
             grounded = false;
+            if (_state.currentState != PlayerState.PState.DIVEKICKING)
+                _state.currentState = PlayerState.PState.JUMPING;
+        }
     }
 
     /// <summary>
@@ -66,7 +70,6 @@ public class PlayerJump : MonoBehaviour
             return;
         }
         _jumpStarted = true;
-        _state.currentState = PlayerState.PState.JUMPING;
         StartCoroutine("TempJumpDisable");
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
     }
