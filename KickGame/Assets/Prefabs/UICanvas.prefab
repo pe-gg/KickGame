@@ -120,8 +120,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 474391940387382726}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: MainMenu
         m_Mode: 1
         m_Arguments:
@@ -899,8 +899,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 474391940387382726}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
@@ -996,7 +996,6 @@ GameObject:
   - component: {fileID: 7270656410517920355}
   - component: {fileID: 6110919735285912699}
   - component: {fileID: 474391940387382726}
-  - component: {fileID: -5253405423218782908}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -1107,18 +1106,6 @@ MonoBehaviour:
   armOnUI: {fileID: 6253224231341777548}
   armOffUI: {fileID: 9060882002861390231}
   arm: {fileID: 0}
---- !u!114 &-5253405423218782908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3379474241538934816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33b3a9bc17103ea4a9dd7c0aa8ab1ff0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   pauseMenu: {fileID: 2040308879467082607}
   settingsMenu: {fileID: 5332318635125438710}
   isPaused: 0
@@ -1321,9 +1308,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: ResumeGame
+      - m_Target: {fileID: 3722667424027642207}
+        m_TargetAssemblyTypeName: GameOverMenu, Assembly-CSharp
+        m_MethodName: Restart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1872,8 +1859,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 474391940387382726}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: ResumeGame
         m_Mode: 1
         m_Arguments:
@@ -2004,8 +1991,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 474391940387382726}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
@@ -2136,9 +2123,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: MainMenu
+      - m_Target: {fileID: 3722667424027642207}
+        m_TargetAssemblyTypeName: GameOverMenu, Assembly-CSharp
+        m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2343,8 +2330,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 474391940387382726}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: ResumeGame
         m_Mode: 1
         m_Arguments:
@@ -2610,7 +2597,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7158996781973283787
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2683,6 +2670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb1c5ccc1b5117048a7a54ca056bfbfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerAim: {fileID: 0}
 --- !u!1 &8139920810581279681
 GameObject:
   m_ObjectHideFlags: 0
@@ -2803,9 +2791,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
+      - m_Target: {fileID: 2040308879467082607}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: QuitGame
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2935,8 +2923,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5253405423218782908}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 474391940387382726}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: SettingsMenu
         m_Mode: 1
         m_Arguments:

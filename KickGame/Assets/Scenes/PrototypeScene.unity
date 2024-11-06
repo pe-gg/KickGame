@@ -6647,14 +6647,30 @@ PrefabInstance:
       propertyPath: arm
       value: 
       objectReference: {fileID: 1270997408}
+    - target: {fileID: 474391940387382726, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
+      propertyPath: playerAim
+      value: 
+      objectReference: {fileID: 1270997414}
+    - target: {fileID: 474391940387382726, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
+      propertyPath: audioMixer
+      value: 
+      objectReference: {fileID: 1129490131}
     - target: {fileID: 2040308879467082607, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3334094510772280242, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3379474241538934816, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 3722667424027642207, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
+      propertyPath: playerAim
+      value: 
+      objectReference: {fileID: 1270997414}
     - target: {fileID: 4009116267968409412, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -6750,6 +6766,10 @@ PrefabInstance:
     - target: {fileID: 7349284925681463217, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012874286968855461, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

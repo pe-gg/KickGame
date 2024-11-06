@@ -11,6 +11,8 @@ public class PlayerHealth : MonoBehaviour
 
     public HealthBar healthBar;
 
+    [SerializeField] public GameOverMenu gameOverMenu;
+
     [SerializeField] private int regenerationAmount = 5; // health to be regenerated
     [SerializeField] private float regenerationDelay = 3f;// seconds before player regens
     [SerializeField] private float regenerationInterval = 1f; // interval during the regen
@@ -33,7 +35,7 @@ public class PlayerHealth : MonoBehaviour
         }
         if(currentHealth <= 0)
         {
-            SceneManager.LoadScene(currentSceneName);
+            GameOver();
         }
     }
 
@@ -85,6 +87,11 @@ public class PlayerHealth : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         currentSceneName = scene.name;
+    }
+
+    public void GameOver()
+    {
+        gameOverMenu.Setup();
     }
 
 }
