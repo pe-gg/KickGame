@@ -50,8 +50,8 @@ MonoBehaviour:
   moveSpeed: 5
   jumpHeight: 2
   gravity: -9.81
-  toggleEnemyShootingKey: 116
-  toggleEnemyChasingKey: 99
+  playerCamera: {fileID: 0}
+  mouseSensitivity: 100
   shootKey: 102
   stunEnemyKey: 103
   playerProjectilePrefab: {fileID: 0}
@@ -236,7 +236,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a991bb7a50b5f46479f1c98008f76969, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
