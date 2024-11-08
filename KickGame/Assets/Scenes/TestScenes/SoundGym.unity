@@ -2033,7 +2033,12 @@ MonoBehaviour:
   musicSource: {fileID: 1206621796}
   SFXSource: {fileID: 1925232803}
   sfxclips:
-  - {fileID: 0}
+  - {fileID: 8300000, guid: bddd1b892dca20345a53825636f1a1a0, type: 3}
+  - {fileID: 8300000, guid: 55afb27b793de9b46a88fea935c8e079, type: 3}
+  - {fileID: 8300000, guid: db43779e1463231469e92db8ba6405d6, type: 3}
+  - {fileID: 8300000, guid: 7438c0a9c76bffe488cda35fb78d0e1d, type: 3}
+  - {fileID: 8300000, guid: fc044bd2ac7cb164ea3bc2d9e91ed589, type: 3}
+  - {fileID: 8300000, guid: 09feda9fe9a919347a598ec0fbf17fd2, type: 3}
   bgm: {fileID: 0}
 --- !u!4 &904474209
 Transform:
