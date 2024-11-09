@@ -17,9 +17,16 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float regenerationDelay = 3f;// seconds before player regens
     [SerializeField] private float regenerationInterval = 1f; // interval during the regen
 
+    AudioManager audioManager;
+
     private Coroutine regenCoroutine;
 
     private string currentSceneName;
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
 
     void Start()
     {
@@ -44,6 +51,8 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
 
         healthBar.SetHealth(currentHealth);
+
+        audioManager.PlaySFX(audioManager.sfxclips[1]);
 
         // Stop ongoing regeneration when taking damage
         if (regenCoroutine != null)

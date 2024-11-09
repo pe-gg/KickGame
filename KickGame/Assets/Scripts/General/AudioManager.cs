@@ -7,7 +7,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioSource musicSource;
     [SerializeField] AudioSource SFXSource;
 
-    [SerializeField] AudioClip[] sfxclips;
+    [SerializeField] public AudioClip[] sfxclips;
     public AudioClip bgm;
 
     // Start is called before the first frame update
@@ -18,7 +18,7 @@ public class AudioManager : MonoBehaviour
         musicSource.loop = true;
     }
     
-    public void PlayVFX(AudioClip clip)
+    public void PlaySFX(AudioClip clip)
     {
         SFXSource.PlayOneShot(clip);
     }

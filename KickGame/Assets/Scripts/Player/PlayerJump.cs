@@ -22,6 +22,8 @@ public class PlayerJump : MonoBehaviour
     private FauxGravity _grav;
     public bool grounded { get; private set; }
     private bool _jumpStarted;
+
+    AudioManager audioManager;
     #endregion
     private void Awake()
     {
@@ -29,6 +31,7 @@ public class PlayerJump : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _grav = GetComponent<FauxGravity>();
         _wallJumpAmountDefault = _wallJumpAmount;
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
     }
     private void OnDrawGizmos()
     {
@@ -72,6 +75,7 @@ public class PlayerJump : MonoBehaviour
         _jumpStarted = true;
         StartCoroutine("TempJumpDisable");
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        audioManager.PlaySFX(audioManager.sfxclips[4]);
     }
 
     /// <summary>
