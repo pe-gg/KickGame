@@ -441,6 +441,9 @@ public class EnemyAI : MonoBehaviour
         _currentState = State.Stunned;
         _agent.isStopped = true;
         _agent.enabled = false;
+
+       
+
         Debug.Log($"{gameObject.name} is stunned for {duration} seconds.");
         // Optionally, play stun animation if available
         yield return new WaitForSeconds(duration);

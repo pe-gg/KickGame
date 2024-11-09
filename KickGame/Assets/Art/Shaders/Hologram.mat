@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Hologram
-  m_Shader: {fileID: -6465566751694194690, guid: dac1c5d8a86c3ee4a86e11893f81ad4d, type: 3}
-  m_Parent: {fileID: -876546973899608171, guid: dac1c5d8a86c3ee4a86e11893f81ad4d, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: cabaadcdcf610844fa953d397ca1680e, type: 3}
+  m_Parent: {fileID: 2100000, guid: cc26feb1fb9e71547b59725b4b97903f, type: 2}
   m_ModifiedSerializedProperties: 2
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -25,6 +25,10 @@ Material:
     m_TexEnvs:
     - _HologramTexture:
         m_Texture: {fileID: 2800000, guid: 219a20052cbde0c4f8ea9c5a6e0aad56, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 40dd3c07f3dae09479a9f01f54b5f615, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
