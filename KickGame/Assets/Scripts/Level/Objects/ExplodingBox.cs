@@ -1,10 +1,13 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class ExplodingBox : BasicBox
 {
     public float kickForce = 10f;         
     public float explosionForce = 500f;  
-    public float explosionRadius = 5f;     
+    public float explosionRadius = 5f;
+
+    public VisualEffect explosionEffect;  // Reference to the VFX component jw
 
     private bool isKicked = false;  
 
@@ -13,6 +16,15 @@ public class ExplodingBox : BasicBox
     {
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
     }
+
+    public void Start()
+    {
+        if (explosionEffect != null)
+        {
+            explosionEffect.Stop(); 
+        }
+    }
+
     public void Kick(Vector3 kickDirection)
     {
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -31,6 +43,13 @@ public class ExplodingBox : BasicBox
         Debug.Log($"{objectName} exploded!");
 
         audioManager.PlaySFX(audioManager.sfxclips[3]);
+
+        // Trigger the explosion VFX
+        if (explosionEffect != null)
+        {
+            explosionEffect.Play();
+        }
+
         // Explosion logic here
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (Collider nearbyObject in colliders)
@@ -48,7 +67,7 @@ public class ExplodingBox : BasicBox
         }
 
         // Destroy the box after exploding
-        Destroy(gameObject);
+        Destroy(gameObject,0.1f);
     }
 
     public override void Interact(GameObject instigator)
