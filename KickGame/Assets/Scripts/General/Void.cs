@@ -6,32 +6,22 @@ using UnityEngine.SceneManagement;
 
 public class Void : MonoBehaviour
 {
-    private string currentSceneName;
+    private GameOverMenu gameOverMenu;
 
-    void OnEnable()
+    void Start()
     {
 
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    void OnDisable()
-    {
-
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        gameOverMenu = FindObjectOfType<GameOverMenu>();
     }
 
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        currentSceneName = scene.name;
-    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
 
-            SceneManager.LoadScene(currentSceneName);
+            gameOverMenu.Setup();
         }
         else
         {
