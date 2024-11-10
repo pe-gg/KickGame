@@ -110,6 +110,7 @@ public class PlayerJump : MonoBehaviour
             _wallJumpAmount--;
             _grav.ResetLocalGravity();
             _rb.AddForce(_jumpForce * 3f * hit.normal, ForceMode.Impulse);
+            _rb.AddForce(_jumpForce * this.transform.forward, ForceMode.Impulse);
             _rb.AddForce(_jumpForce * 1.5f * Vector3.up, ForceMode.Impulse);
         }
     }

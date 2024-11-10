@@ -766,6 +766,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9200781030617802596}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1808642166609919334}
   m_SourcePrefab: {fileID: 100100000, guid: 8d9b96ed43b835f45b26733aba11027e, type: 3}
 --- !u!4 &85150711584305041 stripped
 Transform:
@@ -810,7 +813,7 @@ MonoBehaviour:
   FirePoint: {fileID: 432416592301641274}
   AttackInterval: 1
   AttackRange: 9.28
-  StunGroundCheckDistance: 55
+  StunGroundCheckDistance: 2
 --- !u!195 &3148311549931566376
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -875,3 +878,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!54 &1808642166609919334
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749098038234641707}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

@@ -66,6 +66,15 @@ public class Projectile : MonoBehaviour
                         }
                     }
                 }
+                else if (tag == "Kickable")
+                {
+                    ExplodingBox box = hitObject.GetComponent<ExplodingBox>();
+                    if(box != null)
+                    {
+                        Debug.Log("BOX HIT");
+                        box.Explode();
+                    }
+                }
                 else
                 {
                     Debug.Log($"Projectile hit an object with tag {tag}.");
