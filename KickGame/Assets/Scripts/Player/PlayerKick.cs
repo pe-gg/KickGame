@@ -27,6 +27,8 @@ public class PlayerKick : MonoBehaviour
     private ViewmodelAnimator _anim;
 
     private Quaternion _camClamped;
+
+    AudioManager audioManager;
     #endregion
     private void Awake()
     {
@@ -38,6 +40,7 @@ public class PlayerKick : MonoBehaviour
         _anim = GetComponent<ViewmodelAnimator>();
         _col = _cam.gameObject.GetComponentInChildren<PlayerDiveKickCollider>();
         _camClamped = Quaternion.Euler(Mathf.Clamp(_cam.transform.localEulerAngles.x, -89f, 0f), _cam.transform.localEulerAngles.y, _cam.transform.localEulerAngles.z);
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
     }
 
     /// <summary>
@@ -68,9 +71,11 @@ public class PlayerKick : MonoBehaviour
         if (Physics.Raycast(this.transform.position, _cam.transform.forward, out hit, _kickRange)) //NOTE TO SELF: SWITCH TO USING AN INTERFACE INSTEAD OF BEING LAZY
         {
             ExplodingBox box = hit.transform.GetComponent<ExplodingBox>();
+            audioManager.PlaySFX(audioManager.sfxclips[0]);
             if (box != null)
                 box.Kick(transform.forward);
             EnemyAI enemyHit = hit.transform.GetComponentInParent<EnemyAI>();
+            audioManager.PlaySFX(audioManager.sfxclips[0]);
             if (enemyHit != null)
                 EnemyKnockback(enemyHit);
             Rigidbody rbHit = hit.transform.GetComponent<Rigidbody>();

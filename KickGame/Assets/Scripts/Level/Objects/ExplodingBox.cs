@@ -8,6 +8,11 @@ public class ExplodingBox : BasicBox
 
     private bool isKicked = false;  
 
+    AudioManager audioManager;
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
     public void Kick(Vector3 kickDirection)
     {
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -24,7 +29,8 @@ public class ExplodingBox : BasicBox
     public void Explode()
     {
         Debug.Log($"{objectName} exploded!");
-        
+
+        audioManager.PlaySFX(audioManager.sfxclips[3]);
         // Explosion logic here
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (Collider nearbyObject in colliders)

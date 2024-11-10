@@ -9,8 +9,9 @@ using System.Collections;
 [AddComponentMenu("AI/Enemy AI")]
 public class EnemyAI : MonoBehaviour
 {
-   
-
+    #region Audio Variable
+    AudioManager audioManager;
+    #endregion
 
     #region Enemy Stats
 
@@ -124,6 +125,10 @@ public class EnemyAI : MonoBehaviour
     /// <summary>
     /// Initializes the enemy.
     /// </summary>
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
     private void Start()
     {
        
@@ -165,6 +170,7 @@ public class EnemyAI : MonoBehaviour
                 // Handle stunned behavior
                 break;
             case State.Pain:
+                audioManager.PlaySFX(audioManager.sfxclips[2]);
                 // Handle pain reaction
                 break;
         }
