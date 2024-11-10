@@ -6,14 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class Void : MonoBehaviour
 {
-    private GameOverMenu gameOverMenu;
+    [SerializeField] private GameOverMenu gameOverMenu;
 
-    void Start()
-    {
-
-        gameOverMenu = FindObjectOfType<GameOverMenu>();
-    }
-
+    
 
 
     private void OnTriggerEnter(Collider other)
