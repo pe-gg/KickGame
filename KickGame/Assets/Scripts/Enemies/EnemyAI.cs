@@ -445,6 +445,7 @@ public class EnemyAI : MonoBehaviour
     private IEnumerator StunCoroutine(float duration)
     {
         _currentState = State.Stunned;
+        _animator.SetTrigger("Stunned");
         _agent.isStopped = true;
         _agent.enabled = false;
 
