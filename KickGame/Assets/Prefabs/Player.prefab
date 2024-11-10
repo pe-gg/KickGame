@@ -225,9 +225,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fb0f1e504a49214cb37360c91a82d09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementSpeed: 50
+  _movementSpeed: 40
   _friction: 0.1
-  _speedCap: 15
+  _speedCap: 12.5
   _turnSpeed: 3
 --- !u!114 &4571658989284872187
 MonoBehaviour:
@@ -464,7 +464,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 90
   orthographic: 0
