@@ -31,8 +31,13 @@ Material:
         m_Texture: {fileID: 2800000, guid: 40dd3c07f3dae09479a9f01f54b5f615, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture:
+        m_Texture: {fileID: 2800000, guid: b32885628c084be4bb46d0cb7bb9438a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _FresnelPower: 1.33
     - _QueueControl: 0
     m_Colors:
     - _HologramTiling: {r: 5.23, g: 3, b: 0, a: 0}
