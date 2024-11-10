@@ -7,19 +7,30 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    #region arm variables
     [SerializeField] public GameObject armOnUI;
     [SerializeField] public GameObject armOffUI;
     [SerializeField] public PlayerArm arm;
 
+    [SerializeField] public PlayerAim playerAim;
+    #endregion
+
+    #region menu variables
     [SerializeField] public GameObject pauseMenu;
     [SerializeField] public GameObject settingsMenu;
     public bool isPaused;
-    [SerializeField] public PlayerAim playerAim;
+    #endregion
 
-    [SerializeField] public Slider volumeSlider;
-    [SerializeField] float currentVolume;
-    [SerializeField] public AudioSource audioMixer;
+    #region volume variables
+    [SerializeField] public Slider bgmVolume;
+    [SerializeField] public Slider sfxVolume;
 
+    [SerializeField] float currentBGMVolume;
+    [SerializeField] float currentSFXVolume;
+
+    [SerializeField] public AudioSource bgmSource;
+    [SerializeField] public AudioSource sfxSource;
+    #endregion 
     private void Awake()
     {
         armOnUI.SetActive(true);
@@ -76,10 +87,15 @@ public class UIManager : MonoBehaviour
         playerAim.enabled = false;
         isPaused = true;
     }
-    public void SetVolume(float volume)
+    public void SetVolumeBGM(float volumeFl)
     {
-        audioMixer.volume = volumeSlider.value;
-        currentVolume = volume;
+        bgmSource.volume = bgmVolume.value;
+        currentBGMVolume = volumeFl;
+    }
+    public void SetVolumeSFX(float volumeFl)
+    {
+        sfxSource.volume = sfxVolume.value;
+        currentSFXVolume = volumeFl;
     }
     public void ArmUI()
     {
