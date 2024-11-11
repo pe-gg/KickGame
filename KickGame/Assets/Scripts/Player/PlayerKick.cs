@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Player;
 using UnityEngine;
-using UnityEngine.AI;
 
 /// <summary>
 /// Handles kicking actions associated with the Mouse1 input.
@@ -10,37 +9,47 @@ using UnityEngine.AI;
 public class PlayerKick : MonoBehaviour
 {
     #region Variables
-    [SerializeField] private float _kickRange;
-    [SerializeField] private float _kickForce;
-    [SerializeField] private float _diveKickSpeed;
-    [SerializeField] private float _kickJump;
-    [SerializeField] private float _kickCooldownSeconds;
-    private int _diveKickTimeout = 600;
-    private bool _diving = false;
-    private bool _kicking = false;
-    private Camera _cam;
-    private PlayerState _state;
-    private FauxGravity _grav;
-    private Rigidbody _rb;
-    private PlayerMovement _move;
-    private PlayerDiveKickCollider _col;
-    private ViewmodelAnimator _anim;
 
-    private Quaternion _camClamped;
+    [Header("Kick Settings")]
+    [SerializeField] private float kickRange = 2f;
+    [SerializeField] private float kickForce = 10f;
+    [SerializeField] private float kickCooldownSeconds = 0.5f;
 
-    AudioManager audioManager;
+    [Header("Divekick Settings")]
+    [SerializeField] private float diveKickSpeed = 20f;
+    [SerializeField] private float diveKickGravityDisableDuration = 0.5f;
+    [SerializeField] private float diveKickAcceptanceAngle = 30f; // Angle in degrees
+    [SerializeField] private float diveKickAcceptanceDistance = 10f; // Max distance to lock on
+    [SerializeField] private float maxDiveKickUpwardsAngle = -10f; // Max upwards angle for divekick
+    [SerializeField] private float diveKickCooldownSeconds = 1f;
+    [SerializeField] private Collider diveKickCollider;
+
+    private bool isKicking = false;
+    private bool isDiveKicking = false;
+    private float lastKickTime = -Mathf.Infinity;
+    private float lastDiveKickTime = -Mathf.Infinity;
+    private Vector3 diveKickDirection;
+
+    private Camera cam;
+    private PlayerState state;
+    private Rigidbody rb;
+    private PlayerMovement move;
+    private ViewmodelAnimator anim;
+
+    private IKickable lockedOnKickable;
+
     #endregion
+
     private void Awake()
     {
-        _cam = GetComponentInChildren<Camera>();
-        _state = GetComponent<PlayerState>();
-        _grav = GetComponent<FauxGravity>();
-        _rb = GetComponent<Rigidbody>();
-        _move = GetComponent<PlayerMovement>();
-        _anim = GetComponent<ViewmodelAnimator>();
-        _col = _cam.gameObject.GetComponentInChildren<PlayerDiveKickCollider>();
-        _camClamped = Quaternion.Euler(Mathf.Clamp(_cam.transform.localEulerAngles.x, -89f, 0f), _cam.transform.localEulerAngles.y, _cam.transform.localEulerAngles.z);
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+        cam = GetComponentInChildren<Camera>();
+        state = GetComponent<PlayerState>();
+        rb = GetComponent<Rigidbody>();
+        move = GetComponent<PlayerMovement>();
+        anim = GetComponent<ViewmodelAnimator>();
+
+        if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -48,130 +57,239 @@ public class PlayerKick : MonoBehaviour
     /// </summary>
     public void Kick()
     {
-        if (_state.currentState == PlayerState.PState.JUMPING) 
+        // If on cooldown, return
+        if (Time.time < lastKickTime + kickCooldownSeconds)
+            return;
+
+        // If in air, try to divekick
+        if (state.currentState == PlayerState.PState.JUMPING)
         {
             DiveKick();
         }
         else
         {
-            if (_kicking)
-                return;
             GroundKick();
-            StartCoroutine(KickCooldown((int)_kickCooldownSeconds * 60));
+            lastKickTime = Time.time;
         }
     }
+
     /// <summary>
-    /// Does a raycast and checks if the component has a rigidbody. If so, apply force to the rigidbody in the direction that the player's camera is facing.
-    /// Implementation is currently very basic and WIP.
+    /// Performs a ground kick action.
     /// </summary>
     private void GroundKick()
     {
-        _anim.GroundKick();
-        RaycastHit hit;
-        if (Physics.Raycast(this.transform.position, _cam.transform.forward, out hit, _kickRange)) //NOTE TO SELF: SWITCH TO USING AN INTERFACE INSTEAD OF BEING LAZY
-        {
-            ExplodingBox box = hit.transform.GetComponent<ExplodingBox>();
-            audioManager.PlaySFX(audioManager.sfxclips[0]);
-            if (box != null)
-                box.Kick(transform.forward);
-            EnemyAI enemyHit = hit.transform.GetComponentInParent<EnemyAI>();
-            audioManager.PlaySFX(audioManager.sfxclips[0]);
-            if (enemyHit != null)
-                EnemyKnockback(enemyHit);
-            Rigidbody rbHit = hit.transform.GetComponent<Rigidbody>();
-            if (rbHit == null)
-                return;
-            rbHit.AddForce(_cam.transform.forward * _kickForce, ForceMode.Impulse);
-            Debug.Log("Kick success!");
-        }
-    }
+        if (isKicking)
+            return;
 
-    private void EnemyKnockback(EnemyAI en)
-    {
-        Debug.Log("Enemy kicked!");
-        en.ApplyStun(1f);
-        en.ApplyKnockback(_cam.transform.forward * _kickForce / 4);
+        isKicking = true;
+        anim.GroundKick();
+
+        RaycastHit hit;
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, kickRange))
+        {
+            IKickable kickable = hit.transform.GetComponent<IKickable>();
+            if (kickable != null)
+            {
+                kickable.OnKick(gameObject);
+                Debug.Log("Kicked kickable object!");
+            }
+            else
+            {
+                // If it's not kickable, apply force if it has a rigidbody
+                Rigidbody rbHit = hit.transform.GetComponent<Rigidbody>();
+                if (rbHit != null)
+                {
+                    rbHit.AddForce(cam.transform.forward * kickForce, ForceMode.Impulse);
+                    Debug.Log("Kick success!");
+                }
+            }
+        }
+
+        StartCoroutine(KickCooldown());
     }
 
     /// <summary>
-    /// Initiates the divekick sequence. Thrusts the player upwards, sets the playerstate to divekicking, etc.
+    /// Initiates the divekick sequence.
     /// </summary>
     private void DiveKick()
     {
-        if (_diving)
+        if (isDiveKicking)
             return;
-        _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
-        _anim.DiveKickStart();
-        _rb.AddForce(Vector3.up * _kickJump, ForceMode.Impulse);
-        Debug.Log("Divekick");
-        _state.currentState = PlayerState.PState.DIVEKICKING;
-        _diving = true;
-        bool disable = true;
-        _grav.TempDisableGravity(disable);
-        _move.LockMovement(disable);
-        _move.MultiplySpeedCap(2f);
-        Invoke("DiveStart", 0.33f);
-    }
 
-    /// <summary>
-    /// Enables divekick collider and starts the divekick coroutine.
-    /// </summary>
-    private void DiveStart()
-    {
-        _col.gameObject.SetActive(true);
-        StartCoroutine("DiveKickLoop");
-    }
+        if (Time.time < lastDiveKickTime + diveKickCooldownSeconds)
+            return;
 
-    /// <summary>
-    /// Thrusts the player downwards and forwards relative to their facing direction. 
-    /// If the player does not collide with anything for 10 seconds, exits automatically.
-    /// </summary>
-    private IEnumerator DiveKickLoop()
-    {
-        while (_diving)
+        // Check the player's view angle. If the player is looking upwards beyond maxDiveKickUpwardsAngle, prevent divekick.
+        float camAngle = cam.transform.eulerAngles.x;
+        if (camAngle > 180f)
+            camAngle -= 360f; // Convert angle to -180 to 180 range
+
+        if (camAngle < maxDiveKickUpwardsAngle)
         {
-            _cam.transform.localRotation = _camClamped;
-            _rb.AddForce(_diveKickSpeed * _cam.transform.forward, ForceMode.Impulse);
-            _rb.AddForce(_diveKickSpeed * 0.75f * Vector3.down, ForceMode.Impulse);
-            _diveKickTimeout--;
-            if (_diveKickTimeout <= 0 || _state.currentState != PlayerState.PState.DIVEKICKING)
-            {
-                _diving = false;
-                break;
-            }
-            yield return new WaitForFixedUpdate();
-            }
-        _col.gameObject.SetActive(false);
-        _anim.DiveKickEnd();
-        Debug.Log("Divekick complete!");
-        _diveKickTimeout = 600;
-        bool enable = false;
-        _grav.TempDisableGravity(enable);
-        _move.LockMovement(enable);
-        _move.ResetSpeedCap();
-        yield return new WaitForFixedUpdate();
-    }
-
-    private IEnumerator KickCooldown(int time)
-    {
-        _kicking = true;
-        int kickTimer = time;
-        while (_kicking)
-        {
-            kickTimer--;
-            if(kickTimer <= 0)
-            {
-                _kicking = false;
-                break;
-            }
-            yield return new WaitForFixedUpdate();
+            Debug.Log("Cannot divekick upwards beyond allowed angle.");
+            return;
         }
-        yield return new WaitForFixedUpdate();
+
+        // Now, check for kickable objects in the player's view direction.
+        IKickable targetKickable = null;
+        Vector3 targetPosition = Vector3.zero;
+        float closestAngle = Mathf.Infinity;
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, diveKickAcceptanceDistance);
+        foreach (Collider collider in colliders)
+        {
+            IKickable kickable = collider.GetComponent<IKickable>();
+            if (kickable != null)
+            {
+                Vector3 directionToKickable = (collider.transform.position - cam.transform.position).normalized;
+                float angle = Vector3.Angle(cam.transform.forward, directionToKickable);
+
+                if (angle <= diveKickAcceptanceAngle && angle < closestAngle)
+                {
+                    // Also check if the object is not above player's Y position
+                    if (collider.transform.position.y <= transform.position.y)
+                    {
+                        targetKickable = kickable;
+                        targetPosition = collider.transform.position;
+                        closestAngle = angle;
+                    }
+                }
+            }
+        }
+
+        if (targetKickable != null)
+        {
+            // Lock on to this kickable object
+            lockedOnKickable = targetKickable;
+
+            // Set the diveKickDirection towards the kickable object
+            diveKickDirection = (targetPosition - transform.position).normalized;
+
+            // Optionally rotate the camera to face the target (Bonus)
+            // cam.transform.LookAt(targetPosition);
+        }
+        else
+        {
+            // No kickable object found, divekick in direction of camera
+            diveKickDirection = cam.transform.forward;
+        }
+
+        StartCoroutine(DiveKickCoroutine());
+        lastDiveKickTime = Time.time;
     }
 
+    /// <summary>
+    /// Coroutine that handles the divekick movement and timing.
+    /// </summary>
+    private IEnumerator DiveKickCoroutine()
+    {
+        isDiveKicking = true;
+
+        // Disable gravity
+        rb.useGravity = false;
+
+        // Activate divekick collider
+        if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(true);
+
+        anim.DiveKickStart();
+
+        // Lock movement input
+        move.LockMovement(true);
+
+        // For the duration of gravity disable
+        float duration = diveKickGravityDisableDuration;
+        float elapsed = 0f;
+
+        // Initial thrust
+        rb.velocity = diveKickDirection * diveKickSpeed;
+
+        while (elapsed < duration)
+        {
+            rb.velocity = diveKickDirection * diveKickSpeed;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Re-enable gravity
+        rb.useGravity = true;
+
+        // Continue moving until divekick ends or max duration reached
+        float maxDiveKickDuration = 2f;
+        float totalElapsed = 0f;
+
+        while (isDiveKicking && totalElapsed < maxDiveKickDuration)
+        {
+            rb.velocity = diveKickDirection * diveKickSpeed;
+            totalElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Divekick ended
+        EndDiveKick();
+    }
+
+    /// <summary>
+    /// Ends the divekick sequence and resets variables.
+    /// </summary>
+    private void EndDiveKick()
+    {
+        if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(false);
+
+        anim.DiveKickEnd();
+
+        move.LockMovement(false);
+
+        isDiveKicking = false;
+    }
+
+    /// <summary>
+    /// Handles collision with kickable objects during divekick.
+    /// </summary>
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isDiveKicking)
+        {
+            IKickable kickable = other.GetComponent<IKickable>();
+            if (kickable != null)
+            {
+                kickable.OnKick(gameObject);
+
+                // Bounce upwards
+                rb.velocity = new Vector3(rb.velocity.x, diveKickSpeed, rb.velocity.z);
+
+                // Optionally, end divekick
+                isDiveKicking = false;
+                EndDiveKick();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles collision with other objects during divekick.
+    /// </summary>
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (isDiveKicking)
+        {
+            // End divekick if hitting the ground or other obstacles
+            isDiveKicking = false;
+            EndDiveKick();
+        }
+    }
+
+    /// <summary>
+    /// Cooldown coroutine for ground kick.
+    /// </summary>
+    private IEnumerator KickCooldown()
+    {
+        yield return new WaitForSeconds(kickCooldownSeconds);
+        isKicking = false;
+    }
 
     public bool IsKicking()
     {
-        return _kicking;
+        return isKicking;
     }
- }
+}
