@@ -1398,7 +1398,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: initialUpwardForce
-      value: 7
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: cameraShakeDuration
@@ -1450,47 +1450,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[0].time
-      value: 0
+      value: -0.0041160583
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[1].time
-      value: 0.19943738
+      value: 0.9710388
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[2].time
-      value: 0.9874878
+      value: 0.9710388
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[0].value
-      value: 0.47939682
+      value: 0.70446396
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[1].value
-      value: 0.49053887
+      value: 0.40753555
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[2].value
-      value: 0.69296265
+      value: 0.40753555
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[1].inSlope
-      value: -1.1717632
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[1].inWeight
-      value: 0.33333334
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[1].outSlope
-      value: -1.1717632
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickSpeedCurve.m_Curve.Array.data[1].outWeight
-      value: 0.33333334
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3776917755321845193, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: healthBar
