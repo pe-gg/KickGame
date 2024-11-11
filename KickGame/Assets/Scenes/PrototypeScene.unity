@@ -1381,6 +1381,10 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: initialUpwardForce
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: cameraShakeDuration
       value: 0
       objectReference: {fileID: 0}
@@ -1407,6 +1411,10 @@ PrefabInstance:
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickAcceptanceDistance
       value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: initialUpwardForceDuration
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickGravityDisableDuration

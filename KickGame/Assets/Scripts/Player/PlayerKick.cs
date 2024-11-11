@@ -16,7 +16,6 @@ public class PlayerKick : MonoBehaviour
 
     [Header("Divekick Settings")]
     [SerializeField] private float diveKickInitialForce = 20f;
-    [SerializeField] private float diveKickGravityDisableDuration = 0.2f; // Shortened for smooth transition
     [SerializeField] private float diveKickAcceptanceAngle = 30f; // Angle in degrees
     [SerializeField] private float diveKickAcceptanceDistance = 10f; // Max distance to lock on
     [SerializeField] private float maxDiveKickUpwardsAngle = -10f; // Max upwards angle for divekick
@@ -25,6 +24,10 @@ public class PlayerKick : MonoBehaviour
     [SerializeField] private AnimationCurve diveKickSpeedCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
     [SerializeField] private float maxDiveKickDuration = 2f;
     [SerializeField] private float inputResponsiveness = 2f;
+
+    [Header("Initial Upward Force Settings")]
+    [SerializeField] private float initialUpwardForce = 15f; // Adjust as needed
+    [SerializeField] private float initialUpwardForceDuration = 0.2f; // Duration to apply upward force
 
     [Header("Visual and Audio Effects")]
     [SerializeField] private ParticleSystem diveKickParticles;
@@ -269,7 +272,7 @@ public class PlayerKick : MonoBehaviour
     }
 
     /// <summary>
-    /// Coroutine that handles the divekick movement and timing.
+    /// Coroutine that handles the divekick movement and timing, including initial upward force.
     /// </summary>
     private IEnumerator DiveKickCoroutine()
     {
@@ -280,15 +283,16 @@ public class PlayerKick : MonoBehaviour
         animator.SetTrigger("DiveKick"); // Assuming Animator has a DiveKick trigger
         PlayDiveKickEffects();
 
-        // Smoothly adjust gravity
-        StartCoroutine(AdjustGravity(0f, diveKickGravityDisableDuration)); // Temporarily disable gravity
-
         // Activate divekick collider
         if (diveKickCollider != null)
             diveKickCollider.gameObject.SetActive(true);
 
-        // Apply initial divekick force
-        rb.velocity = diveKickDirection * diveKickInitialForce;
+        // Phase 1: Apply initial upward force
+        rb.AddForce(Vector3.up * initialUpwardForce, ForceMode.Impulse);
+        yield return new WaitForSeconds(initialUpwardForceDuration);
+
+        // Phase 2: Apply forward dive kick force
+        rb.AddForce(diveKickDirection * diveKickInitialForce, ForceMode.Impulse);
 
         float elapsedTime = 0f;
 
@@ -330,32 +334,7 @@ public class PlayerKick : MonoBehaviour
         anim.DiveKickEnd();
         animator.ResetTrigger("DiveKick"); // Reset the trigger if necessary
 
-        // Re-enable gravity
-        StartCoroutine(AdjustGravity(1f, diveKickGravityDisableDuration));
-
         isDiveKicking = false;
-    }
-
-    /// <summary>
-    /// Coroutine to smoothly adjust the gravity of the Rigidbody.
-    /// </summary>
-    /// <param name="targetScale">0 to disable gravity, 1 to enable.</param>
-    /// <param name="duration">Duration over which to adjust gravity.</param>
-    private IEnumerator AdjustGravity(float targetScale, float duration)
-    {
-        float initialScale = rb.useGravity ? 1f : 0f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            // Since Rigidbody doesn't have a gravity scale, toggle gravity based on interpolation
-            float currentScale = Mathf.Lerp(initialScale, targetScale, elapsed / duration);
-            rb.useGravity = currentScale >= 0.5f; // Simple threshold for enabling/disabling gravity
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        rb.useGravity = targetScale >= 0.5f;
     }
 
     /// <summary>
