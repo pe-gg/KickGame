@@ -1,177 +1,445 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using Player;
 using UnityEngine;
-using UnityEngine.AI;
 
 /// <summary>
-/// Handles kicking actions associated with the Mouse1 input.
+/// Handles kicking actions associated with the Mouse1 input, including ground kicks and dive kicks.
 /// </summary>
 public class PlayerKick : MonoBehaviour
 {
     #region Variables
-    [SerializeField] private float _kickRange;
-    [SerializeField] private float _kickForce;
-    [SerializeField] private float _diveKickSpeed;
-    [SerializeField] private float _kickJump;
-    [SerializeField] private float _kickCooldownSeconds;
-    private int _diveKickTimeout = 600;
-    private bool _diving = false;
-    private bool _kicking = false;
-    private Camera _cam;
-    private PlayerState _state;
-    private FauxGravity _grav;
-    private Rigidbody _rb;
-    private PlayerMovement _move;
-    private PlayerDiveKickCollider _col;
-    private ViewmodelAnimator _anim;
 
-    private Quaternion _camClamped;
+    [Header("Kick Settings")]
+    [SerializeField] private float kickRange = 2f;
+    [SerializeField] private float kickForce = 10f;
+    [SerializeField] private float kickCooldownSeconds = 0.2f; // Reduced for responsiveness
 
-    AudioManager audioManager;
+    [Header("Divekick Settings")]
+    [SerializeField] private float diveKickInitialForce = 20f;
+    [SerializeField] private float diveKickAcceptanceAngle = 30f; // Angle in degrees
+    [SerializeField] private float diveKickAcceptanceDistance = 10f; // Max distance to lock on
+    [SerializeField] private float maxDiveKickUpwardsAngle = -10f; // Max upwards angle for divekick
+    [SerializeField] private float diveKickCooldownSeconds = 1f;
+    [SerializeField] private Collider diveKickCollider;
+    [SerializeField] private AnimationCurve diveKickSpeedCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
+    [SerializeField] private float maxDiveKickDuration = 2f;
+    [SerializeField] private float inputResponsiveness = 2f;
+
+    [Header("Initial Upward Force Settings")]
+    [SerializeField] private float initialUpwardForce = 15f; // Adjust as needed
+    [SerializeField] private float initialUpwardForceDuration = 0.2f; // Duration to apply upward force
+
+    [Header("Visual and Audio Effects")]
+    [SerializeField] private ParticleSystem diveKickParticles;
+    [SerializeField] private AudioClip diveKickSound;
+    [SerializeField] private AudioClip groundKickSound;
+    [SerializeField] private AudioClip impactSound;
+    [SerializeField] private float cameraShakeIntensity = 0.1f;
+    [SerializeField] private float cameraShakeDuration = 0.2f;
+    
+    private bool isKicking = false;
+    private bool isDiveKicking = false;
+    private float lastKickTime = -Mathf.Infinity;
+    private float lastDiveKickTime = -Mathf.Infinity;
+    private Vector3 diveKickDirection;
+
+    private bool LimitDiveKick = false;
+
+    private Camera cam;
+    private PlayerState state;
+    private Rigidbody rb;
+    private PlayerMovement move;
+    private ViewmodelAnimator anim;
+    private Animator animator;
+    private AudioSource audioSource;
+
+    private IKickable lockedOnKickable;
+
     #endregion
+
+    #region Unity Methods
+
     private void Awake()
     {
-        _cam = GetComponentInChildren<Camera>();
-        _state = GetComponent<PlayerState>();
-        _grav = GetComponent<FauxGravity>();
-        _rb = GetComponent<Rigidbody>();
-        _move = GetComponent<PlayerMovement>();
-        _anim = GetComponent<ViewmodelAnimator>();
-        _col = _cam.gameObject.GetComponentInChildren<PlayerDiveKickCollider>();
-        _camClamped = Quaternion.Euler(Mathf.Clamp(_cam.transform.localEulerAngles.x, -89f, 0f), _cam.transform.localEulerAngles.y, _cam.transform.localEulerAngles.z);
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+        cam = GetComponentInChildren<Camera>();
+        state = GetComponent<PlayerState>();
+        rb = GetComponent<Rigidbody>();
+        move = GetComponent<PlayerMovement>();
+        anim = GetComponent<ViewmodelAnimator>();
+        animator = GetComponentInChildren<Animator>();
+        audioSource = GetComponent<AudioSource>();
+
+        if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(false);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isDiveKicking)
+        {
+            IKickable kickable = other.GetComponent<IKickable>();
+            if (kickable != null)
+            {
+                kickable.OnKick(gameObject);
+                PlayImpactEffects();
+
+                // Apply additional force to the kickable object
+                Rigidbody rbKickable = other.GetComponent<Rigidbody>();
+                if (rbKickable != null)
+                {
+                    // Ensure the direction is clamped before applying force
+                    Vector3 clampedDirection = ClampDiveKickDirection(diveKickDirection);
+                    rbKickable.AddForce(clampedDirection * kickForce, ForceMode.Impulse);
+                }
+
+                // Bounce upwards
+                rb.velocity = new Vector3(rb.velocity.x, diveKickInitialForce * 0.5f, rb.velocity.z);
+
+                // End divekick
+                isDiveKicking = false;
+                EndDiveKick();
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (isDiveKicking)
+        {
+            // Check if collided with the ground or other obstacles
+            if (collision.gameObject.CompareTag("Ground") || collision.gameObject.layer != gameObject.layer)
+            {
+                isDiveKicking = false;
+                PlayImpactEffects();
+                EndDiveKick();
+            }
+        }
+    }
+
+    #endregion
+
+    #region Public Methods
+
     /// <summary>
-    /// Called by PlayerInputManager. If the player is in the air, divekick. Otherwise, ground kick.
+    /// Called by PlayerInputManager. If the player is in the air, perform a divekick. Otherwise, perform a ground kick.
     /// </summary>
     public void Kick()
     {
-        if (_state.currentState == PlayerState.PState.JUMPING) 
+        // If on cooldown, return
+        if (Time.time < lastKickTime + kickCooldownSeconds)
+            return;
+
+        // If in air, try to divekick
+        if (state.currentState == PlayerState.PState.JUMPING)
         {
             DiveKick();
         }
         else
         {
-            if (_kicking)
-                return;
             GroundKick();
-            StartCoroutine(KickCooldown((int)_kickCooldownSeconds * 60));
+            lastKickTime = Time.time;
         }
     }
+
     /// <summary>
-    /// Does a raycast and checks if the component has a rigidbody. If so, apply force to the rigidbody in the direction that the player's camera is facing.
-    /// Implementation is currently very basic and WIP.
+    /// Returns whether the player is currently performing a ground kick.
+    /// </summary>
+    public bool IsKicking()
+    {
+        return isKicking;
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Performs a ground kick action with physics-based force application.
     /// </summary>
     private void GroundKick()
     {
-        _anim.GroundKick();
-        RaycastHit hit;
-        if (Physics.Raycast(this.transform.position, _cam.transform.forward, out hit, _kickRange)) //NOTE TO SELF: SWITCH TO USING AN INTERFACE INSTEAD OF BEING LAZY
-        {
-            ExplodingBox box = hit.transform.GetComponent<ExplodingBox>();
-            audioManager.PlaySFX(audioManager.sfxclips[0]);
-            if (box != null)
-                box.Kick(transform.forward);
-            EnemyAI enemyHit = hit.transform.GetComponentInParent<EnemyAI>();
-            audioManager.PlaySFX(audioManager.sfxclips[0]);
-            if (enemyHit != null)
-                EnemyKnockback(enemyHit);
-            Rigidbody rbHit = hit.transform.GetComponent<Rigidbody>();
-            if (rbHit == null)
-                return;
-            rbHit.AddForce(_cam.transform.forward * _kickForce, ForceMode.Impulse);
-            Debug.Log("Kick success!");
-        }
-    }
+        if (isKicking)
+            return;
 
-    private void EnemyKnockback(EnemyAI en)
-    {
-        Debug.Log("Enemy kicked!");
-        en.ApplyStun(1f);
-        en.ApplyKnockback(_cam.transform.forward * _kickForce / 4);
+        isKicking = true;
+        anim.GroundKick();
+        animator.SetTrigger("GroundKick"); // Assuming Animator has a GroundKick trigger
+
+        PlayGroundKickEffects();
+
+        RaycastHit hit;
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, kickRange))
+        {
+            IKickable kickable = hit.transform.GetComponent<IKickable>();
+            if (kickable != null)
+            {
+                kickable.OnKick(gameObject);
+                Debug.Log("Kicked kickable object!");
+            }
+            else
+            {
+                // If it's not kickable, apply force if it has a rigidbody
+                Rigidbody rbHit = hit.transform.GetComponent<Rigidbody>();
+                if (rbHit != null)
+                {
+                    rbHit.AddForce(cam.transform.forward * kickForce, ForceMode.Impulse);
+                    Debug.Log("Kick success!");
+                }
+            }
+        }
+
+        StartCoroutine(KickCooldown());
     }
 
     /// <summary>
-    /// Initiates the divekick sequence. Thrusts the player upwards, sets the playerstate to divekicking, etc.
+    /// Initiates the divekick sequence.
     /// </summary>
     private void DiveKick()
     {
-        if (_diving)
+        if (isDiveKicking)
             return;
-        _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
-        _anim.DiveKickStart();
-        _rb.AddForce(Vector3.up * _kickJump, ForceMode.Impulse);
-        Debug.Log("Divekick");
-        _state.currentState = PlayerState.PState.DIVEKICKING;
-        _diving = true;
-        bool disable = true;
-        _grav.TempDisableGravity(disable);
-        _move.LockMovement(disable);
-        _move.MultiplySpeedCap(2f);
-        Invoke("DiveStart", 0.33f);
-    }
 
-    /// <summary>
-    /// Enables divekick collider and starts the divekick coroutine.
-    /// </summary>
-    private void DiveStart()
-    {
-        _col.gameObject.SetActive(true);
-        StartCoroutine("DiveKickLoop");
-    }
+        if (Time.time < lastDiveKickTime + diveKickCooldownSeconds)
+            return;
 
-    /// <summary>
-    /// Thrusts the player downwards and forwards relative to their facing direction. 
-    /// If the player does not collide with anything for 10 seconds, exits automatically.
-    /// </summary>
-    private IEnumerator DiveKickLoop()
-    {
-        while (_diving)
+        // Check the player's view angle. Prevent divekick if looking too far upwards.
+        float camPitch = cam.transform.eulerAngles.x;
+        if (camPitch > 180f)
+            camPitch -= 360f; // Convert angle to -180 to 180 range
+
+        if (camPitch < maxDiveKickUpwardsAngle)
         {
-            _cam.transform.localRotation = _camClamped;
-            _rb.AddForce(_diveKickSpeed * _cam.transform.forward, ForceMode.Impulse);
-            _rb.AddForce(_diveKickSpeed * 0.75f * Vector3.down, ForceMode.Impulse);
-            _diveKickTimeout--;
-            if (_diveKickTimeout <= 0 || _state.currentState != PlayerState.PState.DIVEKICKING)
-            {
-                _diving = false;
-                break;
-            }
-            yield return new WaitForFixedUpdate();
-            }
-        _col.gameObject.SetActive(false);
-        _anim.DiveKickEnd();
-        Debug.Log("Divekick complete!");
-        _diveKickTimeout = 600;
-        bool enable = false;
-        _grav.TempDisableGravity(enable);
-        _move.LockMovement(enable);
-        _move.ResetSpeedCap();
-        yield return new WaitForFixedUpdate();
-    }
-
-    private IEnumerator KickCooldown(int time)
-    {
-        _kicking = true;
-        int kickTimer = time;
-        while (_kicking)
-        {
-            kickTimer--;
-            if(kickTimer <= 0)
-            {
-                _kicking = false;
-                break;
-            }
-            yield return new WaitForFixedUpdate();
+            Debug.Log("Cannot divekick upwards beyond allowed angle.");
+            LimitDiveKick = true;
+            
+            diveKickDirection = cam.transform.forward;
         }
-        yield return new WaitForFixedUpdate();
+        else
+        {
+            // Find a target kickable object within acceptance parameters
+            FindDiveKickTarget();
+
+            // Set diveKickDirection towards the target or forward
+            if (lockedOnKickable != null)
+            {
+                // Cast to Component to access transform
+                Component kickableComponent = lockedOnKickable as Component;
+                if (kickableComponent != null)
+                {
+                    diveKickDirection = (kickableComponent.transform.position - transform.position).normalized;
+                }
+                else
+                {
+                    // Fallback if casting fails
+                    diveKickDirection = cam.transform.forward;
+                }
+            }
+            else
+            {
+                diveKickDirection = cam.transform.forward;
+            }
+        }
+
+        // Clamp the diveKickDirection to prevent upward direction
+        diveKickDirection = ClampDiveKickDirection(diveKickDirection);
+
+        StartCoroutine(DiveKickCoroutine());
+        lastDiveKickTime = Time.time;
     }
 
-
-    public bool IsKicking()
+    /// <summary>
+    /// Clamps the dive kick direction to ensure it's not upwards.
+    /// </summary>
+    /// <param name="direction">Original dive kick direction.</param>
+    /// <returns>Clamped dive kick direction.</returns>
+    private Vector3 ClampDiveKickDirection(Vector3 direction)
     {
-        return _kicking;
+        Vector3 clampedDir = direction.normalized;
+
+        if (clampedDir.y > 0)
+        {
+            clampedDir.y = 0;
+            clampedDir.Normalize();
+        }
+
+        return clampedDir;
     }
- }
+
+    /// <summary>
+    /// Finds a target kickable object within the acceptance angle and distance.
+    /// </summary>
+    private void FindDiveKickTarget()
+    {
+        lockedOnKickable = null;
+        float closestAngle = Mathf.Infinity;
+        Vector3 targetPosition = Vector3.zero;
+
+        // Define a layer mask for kickable objects to optimize performance
+        int kickableLayerMask = LayerMask.GetMask("Kickable"); // Ensure Kickable objects are on this layer
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, diveKickAcceptanceDistance, kickableLayerMask);
+        foreach (Collider collider in colliders)
+        {
+            IKickable kickable = collider.GetComponent<IKickable>();
+            if (kickable != null)
+            {
+                Vector3 directionToKickable = (collider.transform.position - cam.transform.position).normalized;
+                float angle = Vector3.Angle(cam.transform.forward, directionToKickable);
+
+                if (angle <= diveKickAcceptanceAngle && angle < closestAngle)
+                {
+                    // Ensure the object is not above the player's Y position
+                    if (collider.transform.position.y <= transform.position.y)
+                    {
+                        lockedOnKickable = kickable;
+                        targetPosition = collider.transform.position;
+                        closestAngle = angle;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Coroutine that handles the divekick movement and timing, including initial upward force.
+    /// </summary>
+    private IEnumerator DiveKickCoroutine()
+    {
+        isDiveKicking = true;
+
+        // Play divekick animations and effects
+        anim.DiveKickStart();
+        animator.SetTrigger("DiveKick"); // Assuming Animator has a DiveKick trigger
+        PlayDiveKickEffects();
+
+        // Activate divekick collider
+        if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(true);
+
+        // Phase 1: Apply initial upward force
+        rb.AddForce(Vector3.up * initialUpwardForce, ForceMode.Impulse);
+        yield return new WaitForSeconds(initialUpwardForceDuration);
+
+        // Phase 2: Apply forward dive kick force
+        rb.AddForce(diveKickDirection * diveKickInitialForce, ForceMode.Impulse);
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < maxDiveKickDuration && isDiveKicking)
+        {
+            float normalizedTime = elapsedTime / maxDiveKickDuration;
+            float speedMultiplier = diveKickSpeedCurve.Evaluate(normalizedTime);
+
+            // Apply additional force based on the animation curve
+            rb.AddForce(diveKickDirection * diveKickInitialForce * speedMultiplier, ForceMode.Acceleration);
+
+            // Allow player to slightly influence direction
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            Vector3 inputDir = new Vector3(horizontal, 0, vertical).normalized;
+
+            if (inputDir.magnitude > 0)
+            {
+                Vector3 adjustedDirection = Vector3.Lerp(diveKickDirection, (diveKickDirection + inputDir * 0.5f), Time.deltaTime * inputResponsiveness).normalized;
+                // Clamp the adjusted direction to prevent upward direction
+                diveKickDirection = ClampDiveKickDirection(adjustedDirection);
+            }
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // End divekick after duration
+        EndDiveKick();
+    }
+
+    /// <summary>
+    /// Ends the divekick sequence and resets variables.
+    /// </summary>
+    private void EndDiveKick()
+    {
+        if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(false);
+
+        anim.DiveKickEnd();
+        animator.ResetTrigger("DiveKick"); // Reset the trigger if necessary
+
+        isDiveKicking = false;
+    }
+
+    /// <summary>
+    /// Handles cooldown for ground kicks.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator KickCooldown()
+    {
+        yield return new WaitForSeconds(kickCooldownSeconds);
+        isKicking = false;
+    }
+
+    /// <summary>
+    /// Plays visual and audio effects for divekick initiation.
+    /// </summary>
+    private void PlayDiveKickEffects()
+    {
+        if (diveKickParticles != null)
+            diveKickParticles.Play();
+
+        if (audioSource != null && diveKickSound != null)
+            audioSource.PlayOneShot(diveKickSound);
+
+        // Implement camera shake
+        StartCoroutine(CameraShake(cameraShakeIntensity, cameraShakeDuration));
+    }
+
+    /// <summary>
+    /// Plays visual and audio effects for ground kick.
+    /// </summary>
+    private void PlayGroundKickEffects()
+    {
+        if (audioSource != null && groundKickSound != null)
+            audioSource.PlayOneShot(groundKickSound);
+
+        // Implement camera shake
+        StartCoroutine(CameraShake(cameraShakeIntensity * 0.5f, cameraShakeDuration * 0.5f));
+    }
+
+    /// <summary>
+    /// Plays visual and audio effects upon impact.
+    /// </summary>
+    private void PlayImpactEffects()
+    {
+        if (audioSource != null && impactSound != null)
+            audioSource.PlayOneShot(impactSound);
+
+        if (diveKickParticles != null)
+            diveKickParticles.Stop();
+    }
+
+    /// <summary>
+    /// Coroutine to handle camera shake effect.
+    /// </summary>
+    /// <param name="intensity">Intensity of the shake.</param>
+    /// <param name="duration">Duration of the shake.</param>
+    /// <returns></returns>
+    private IEnumerator CameraShake(float intensity, float duration)
+    {
+        Vector3 originalPos = cam.transform.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * intensity;
+            float y = Random.Range(-1f, 1f) * intensity;
+
+            cam.transform.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        cam.transform.localPosition = originalPos;
+    }
+
+    #endregion
+}
