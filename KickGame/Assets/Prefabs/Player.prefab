@@ -274,7 +274,7 @@ MonoBehaviour:
     m_Bits: 64
   _checkSize: 0.05
   _checkDist: 1
-  _jumpForce: 9
+  _jumpForce: 13
   _jumpCancelWindow: 0.5
   _wallJumpRadius: 1
   _wallJumpAmount: 3
@@ -303,11 +303,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5670af4fe9a15004098d2b9d9c2cff29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _kickRange: 2
-  _kickForce: 15
-  _diveKickSpeed: 2
-  _kickJump: 5
-  _kickCooldownSeconds: 1
+  kickRange: 2
+  kickForce: 10
+  kickCooldownSeconds: 0.5
+  diveKickInitialForce: 20
+  diveKickGravityDisableDuration: 0.5
+  diveKickAcceptanceAngle: 30
+  diveKickAcceptanceDistance: 10
+  maxDiveKickUpwardsAngle: 0
+  diveKickCooldownSeconds: 1
+  diveKickCollider: {fileID: 1224987395510850181}
+  diveKickSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxDiveKickDuration: 2
+  inputResponsiveness: 2
+  diveKickParticles: {fileID: 0}
+  diveKickSound: {fileID: 0}
+  groundKickSound: {fileID: 0}
+  impactSound: {fileID: 0}
+  cameraShakeIntensity: 0.1
+  cameraShakeDuration: 0.2
 --- !u!114 &3055929301128008343
 MonoBehaviour:
   m_ObjectHideFlags: 0
