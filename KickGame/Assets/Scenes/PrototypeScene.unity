@@ -1381,12 +1381,32 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: maxDiveKickAngle
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: maxDiveKickPitch
+      value: 23.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: minDiveKickAngle
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: minDiveKickPitch
+      value: 90.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: initialUpwardForce
-      value: 30
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: cameraShakeDuration
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: debugDiveKickAngles
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: maxDiveKickDuration
@@ -1401,6 +1421,10 @@ PrefabInstance:
       value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: impostorDiveKickAngle
+      value: 17.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickAcceptanceAngle
       value: 35
       objectReference: {fileID: 0}
@@ -1409,12 +1433,16 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: maxDiveKickDownwardsAngle
+      value: 19.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickAcceptanceDistance
       value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: initialUpwardForceDuration
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 424534444953843213, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: diveKickGravityDisableDuration
@@ -1468,6 +1496,10 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 1258943903}
+    - target: {fileID: 4287706872606360826, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5709787375315458387, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: m_Name
       value: Player
