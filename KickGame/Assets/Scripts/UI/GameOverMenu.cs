@@ -9,12 +9,16 @@ public class GameOverMenu : MonoBehaviour
     [SerializeField] public PlayerAim playerAim;
     public void Setup()
     {
+        currentSceneName = SceneManager.GetActiveScene().name;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         Time.timeScale = 0f;
         playerAim.enabled = false;
         this.gameObject.SetActive(true);
     }
     public void Restart()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(currentSceneName);
     }
     public void MainMenu()

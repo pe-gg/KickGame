@@ -24,7 +24,8 @@ public class GameManager : Singleton
         {
             //same scene
             _player = GameObject.Find("Player");
-            Invoke("TeleportPlayer", 0.01f);
+            if(check != 0)
+                Invoke("TeleportPlayer", 0.01f);
             check++;
             Debug.Log("Same scene loaded! " + check);
         }
