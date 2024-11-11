@@ -50,7 +50,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
@@ -67,6 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _kickHitForce: 20
+  col: {fileID: 0}
 --- !u!1 &5709787375315458387
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,7 +312,7 @@ MonoBehaviour:
   diveKickAcceptanceDistance: 10
   maxDiveKickUpwardsAngle: -0.3
   diveKickCooldownSeconds: 1
-  diveKickCollider: {fileID: 1224987395510850181}
+  diveKickCollider: {fileID: 2350960645345846831}
   diveKickSpeedCurve:
     serializedVersion: 2
     m_Curve:

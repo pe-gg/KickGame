@@ -11,30 +11,43 @@ public class PlayerDiveKickCollider : MonoBehaviour
     private Rigidbody _rb;
     private PlayerState _state;
     private PlayerJump _jump;
+    public Collider col;
+    
     private void Awake()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _state = GetComponentInParent<PlayerState>();
         _jump = GetComponentInParent<PlayerJump>();
-        Invoke("Dummy", 0.1f);
-    }
-    private void Dummy()
-    {
-        this.gameObject.SetActive(false);
+        col = GetComponent<Collider>();
     }
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Enemy") || other.CompareTag("Kickable"))
         {
-            this.gameObject.SetActive(false);
+            col.enabled = false;
             _jump.JumpDisable();
+            StartCoroutine(ResetRBAndJump());
             _state.currentState = PlayerState.PState.JUMPING;
-            _rb.velocity = Vector3.zero;
-            _rb.AddForce(Vector3.up * _kickHitForce, ForceMode.Impulse);
+
             EnemyAI en = other.GetComponentInParent<EnemyAI>();
             if (en == null)
                 return;
             en.ApplyStun(2f);
         }
+    }
+
+    IEnumerator ResetRBAndJump()
+    {
+        var oldConstraints = _rb.constraints;
+        Debug.Log("Coroutine Started!");
+        _rb.constraints = RigidbodyConstraints.FreezeAll;
+        _rb.velocity = Vector3.zero;
+        _rb.angularVelocity = Vector3.zero;
+        yield return new WaitForFixedUpdate();
+        _rb.constraints = oldConstraints;
+        yield return new WaitForFixedUpdate();
+        _rb.AddForce(Vector3.up * _kickHitForce, ForceMode.Impulse);
+        Debug.Log("Velocity is " + _rb.velocity);
+        Debug.Log("Angular Vel is " + _rb.angularVelocity);
     }
 }

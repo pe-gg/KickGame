@@ -20,7 +20,7 @@ public class PlayerKick : MonoBehaviour
     [SerializeField] private float diveKickAcceptanceDistance = 10f; // Max distance to lock on
     [SerializeField] private float maxDiveKickUpwardsAngle = -10f; // Max upwards angle for divekick
     [SerializeField] private float diveKickCooldownSeconds = 1f;
-    [SerializeField] private Collider diveKickCollider;
+    [SerializeField] private PlayerDiveKickCollider diveKickCollider;
     [SerializeField] private AnimationCurve diveKickSpeedCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
     [SerializeField] private float maxDiveKickDuration = 2f;
     [SerializeField] private float inputResponsiveness = 2f;
@@ -69,8 +69,8 @@ public class PlayerKick : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         audioSource = GetComponent<AudioSource>();
 
-        if (diveKickCollider != null)
-            diveKickCollider.gameObject.SetActive(false);
+        /*if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(false);*/
     }
 
     private void OnTriggerEnter(Collider other)
@@ -107,7 +107,7 @@ public class PlayerKick : MonoBehaviour
         if (isDiveKicking)
         {
             // Check if collided with the ground or other obstacles
-            if (collision.gameObject.CompareTag("Ground") || collision.gameObject.layer != gameObject.layer)
+            if (collision.gameObject.layer != gameObject.layer)
             {
                 isDiveKicking = false;
                 PlayImpactEffects();
@@ -321,7 +321,7 @@ public class PlayerKick : MonoBehaviour
 
         // Activate divekick collider
         if (diveKickCollider != null)
-            diveKickCollider.gameObject.SetActive(true);
+            diveKickCollider.col.enabled = true;
 
         float elapsedTime = 0f;
 
@@ -359,7 +359,7 @@ public class PlayerKick : MonoBehaviour
     private void EndDiveKick()
     {
         if (diveKickCollider != null)
-            diveKickCollider.gameObject.SetActive(false);
+            diveKickCollider.col.enabled = false;
 
         anim.DiveKickEnd();
         animator.ResetTrigger("DiveKick"); // Reset the trigger if necessary
