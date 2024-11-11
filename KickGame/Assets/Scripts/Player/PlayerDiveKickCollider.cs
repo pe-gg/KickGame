@@ -12,6 +12,7 @@ public class PlayerDiveKickCollider : MonoBehaviour
     private PlayerState _state;
     private PlayerJump _jump;
     public Collider col;
+    AudioManager audioManager;
     
     private void Awake()
     {
@@ -19,6 +20,7 @@ public class PlayerDiveKickCollider : MonoBehaviour
         _state = GetComponentInParent<PlayerState>();
         _jump = GetComponentInParent<PlayerJump>();
         col = GetComponent<Collider>();
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -28,6 +30,7 @@ public class PlayerDiveKickCollider : MonoBehaviour
             _jump.JumpDisable();
             StartCoroutine(ResetRBAndJump());
             _state.currentState = PlayerState.PState.JUMPING;
+            audioManager.PlaySFX(audioManager.sfxclips[0]);
 
             EnemyAI en = other.GetComponentInParent<EnemyAI>();
             if (en == null)

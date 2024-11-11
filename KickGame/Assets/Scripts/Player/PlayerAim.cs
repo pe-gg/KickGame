@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerAim : MonoBehaviour
 {
-    [SerializeField] private float aimSensitivity;
+    public float aimSensitivity;
     
     [SerializeField]private float _clamp = 89f;
     [SerializeField] private Transform _camera;

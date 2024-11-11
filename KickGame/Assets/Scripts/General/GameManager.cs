@@ -8,6 +8,7 @@ public class GameManager : Singleton
     public Vector3 SpawnPoint;
     public bool CheckpointTriggered = false;
     public bool InitialSpawnSet = false;
+    public float mouseSens = 8f;
     private string _levelName;
     private int check; //debug purposes
     private GameObject _player;
@@ -50,5 +51,10 @@ public class GameManager : Singleton
     private void TeleportPlayer()
     {
         _player.transform.position = SpawnPoint;
+    }
+
+    public void UpdateMouseSens()
+    {
+        _player.GetComponent<PlayerAim>().aimSensitivity = mouseSens;
     }
 }

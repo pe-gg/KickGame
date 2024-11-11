@@ -52,6 +52,7 @@ public class PlayerKick : MonoBehaviour
     private ViewmodelAnimator anim;
     private Animator animator;
     private AudioSource audioSource;
+    private AudioManager audioManager; //bandaid fix
 
     private IKickable lockedOnKickable;
 
@@ -68,6 +69,7 @@ public class PlayerKick : MonoBehaviour
         anim = GetComponent<ViewmodelAnimator>();
         animator = GetComponentInChildren<Animator>();
         audioSource = GetComponent<AudioSource>();
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
 
         /*if (diveKickCollider != null)
             diveKickCollider.gameObject.SetActive(false);*/
@@ -175,6 +177,7 @@ public class PlayerKick : MonoBehaviour
             {
                 kickable.OnKick(gameObject);
                 Debug.Log("Kicked kickable object!");
+                audioManager.PlaySFX(audioManager.sfxclips[0]);
             }
             else
             {

@@ -30,9 +30,15 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] public AudioSource bgmSource;
     [SerializeField] public AudioSource sfxSource;
-    #endregion 
+    #endregion
+
+    #region GameManager
+    private GameManager _gm;
+    [SerializeField] public Slider sensSlider;
+    #endregion
     private void Awake()
     {
+        _gm = FindObjectOfType<GameManager>();
         armOnUI.SetActive(true);
         armOffUI.SetActive(false);
         pauseMenu.SetActive(false);
@@ -96,6 +102,12 @@ public class UIManager : MonoBehaviour
     {
         sfxSource.volume = sfxVolume.value;
         currentSFXVolume = volumeFl;
+    }
+
+    public void SetMouseSensitivity()
+    {
+        _gm.mouseSens = sensSlider.value;
+        _gm.UpdateMouseSens();
     }
     public void ArmUI()
     {

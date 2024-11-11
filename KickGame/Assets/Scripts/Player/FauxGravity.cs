@@ -29,7 +29,7 @@ public class FauxGravity : MonoBehaviour
             return;
         }
         _localGrav = _localGrav + _gravity * 1.5f;
-        _localGrav = Mathf.Clamp(_localGrav, 0f, 25f);//Mathf.Clamp(_gravity * 100f, 0f, 10000f));
+        _localGrav = Mathf.Clamp(_localGrav, 0f, 25f);
         _rb.AddForce(Vector3.down * _localGrav, ForceMode.Acceleration);
     }
     /// <summary>
