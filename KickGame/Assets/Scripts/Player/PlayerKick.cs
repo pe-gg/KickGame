@@ -256,9 +256,9 @@ public class PlayerKick : MonoBehaviour
     {
         Vector3 clampedDir = direction.normalized;
 
-        if (clampedDir.y > 0)
+        if (clampedDir.y > maxDiveKickUpwardsAngle)
         {
-            clampedDir.y = 0;
+            clampedDir.y = maxDiveKickUpwardsAngle;
             clampedDir.Normalize();
         }
 
@@ -312,16 +312,16 @@ public class PlayerKick : MonoBehaviour
         animator.SetTrigger("DiveKick"); // Assuming Animator has a DiveKick trigger
         PlayDiveKickEffects();
 
-        // Activate divekick collider
-        if (diveKickCollider != null)
-            diveKickCollider.gameObject.SetActive(true);
-
         // Phase 1: Apply initial upward force
         rb.AddForce(Vector3.up * initialUpwardForce, ForceMode.Impulse);
         yield return new WaitForSeconds(initialUpwardForceDuration);
 
         // Phase 2: Apply forward dive kick force
         rb.AddForce(diveKickDirection * diveKickInitialForce, ForceMode.Impulse);
+
+        // Activate divekick collider
+        if (diveKickCollider != null)
+            diveKickCollider.gameObject.SetActive(true);
 
         float elapsedTime = 0f;
 

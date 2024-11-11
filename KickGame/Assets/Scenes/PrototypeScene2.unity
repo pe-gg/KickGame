@@ -1935,6 +1935,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1460036934}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &199604878 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3722667424027642207, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
+  m_PrefabInstance: {fileID: 635837678}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb1c5ccc1b5117048a7a54ca056bfbfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &213702740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2285,38 +2296,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &388313219 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1948120282143438329, guid: 644222179ab05ff40be53b099db1761e, type: 3}
-  m_PrefabInstance: {fileID: 798217903}
-  m_PrefabAsset: {fileID: 0}
---- !u!54 &388313223
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 388313219}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &475974029
 GameObject:
   m_ObjectHideFlags: 0
@@ -2714,6 +2693,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2350960645345846831, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: _kickHitForce
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 2918936704987368506, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: healthBar
       value: 
@@ -2734,6 +2717,10 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 1660128794}
+    - target: {fileID: 3776917755321845193, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
+      propertyPath: gameOverMenu
+      value: 
+      objectReference: {fileID: 199604878}
     - target: {fileID: 5709787375315458387, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
       propertyPath: m_Name
       value: Player
@@ -5154,10 +5141,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1948120282143438329, guid: 644222179ab05ff40be53b099db1761e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 388313223}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 644222179ab05ff40be53b099db1761e, type: 3}
 --- !u!43 &818999636
 Mesh:
@@ -9174,6 +9158,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Void
       objectReference: {fileID: 0}
+    - target: {fileID: 5249629896668607563, guid: a8bca07ef2625604db7988c18f87eac7, type: 3}
+      propertyPath: gameOverMenu
+      value: 
+      objectReference: {fileID: 199604878}
     - target: {fileID: 8349928885881890624, guid: a8bca07ef2625604db7988c18f87eac7, type: 3}
       propertyPath: m_Size.x
       value: 1000

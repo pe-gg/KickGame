@@ -10,10 +10,12 @@ public class PlayerDiveKickCollider : MonoBehaviour
     [SerializeField] private float _kickHitForce;
     private Rigidbody _rb;
     private PlayerState _state;
+    private PlayerJump _jump;
     private void Awake()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _state = GetComponentInParent<PlayerState>();
+        _jump = GetComponentInParent<PlayerJump>();
         Invoke("Dummy", 0.1f);
     }
     private void Dummy()
@@ -25,6 +27,7 @@ public class PlayerDiveKickCollider : MonoBehaviour
         if(other.CompareTag("Enemy") || other.CompareTag("Kickable"))
         {
             this.gameObject.SetActive(false);
+            _jump.JumpDisable();
             _state.currentState = PlayerState.PState.JUMPING;
             _rb.velocity = Vector3.zero;
             _rb.AddForce(Vector3.up * _kickHitForce, ForceMode.Impulse);

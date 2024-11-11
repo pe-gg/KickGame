@@ -10,6 +10,13 @@ namespace Player
             Debug.Log($"{gameObject.name} was kicked by {kicker.name}!");
 
             // Example: Apply force
+            EnemyAI en = GetComponent<EnemyAI>();
+            if (en != null)
+            {
+                en.ApplyStun(2f);
+                Vector3 forceDirection = (transform.position - kicker.transform.position).normalized;
+                en.ApplyKnockback(forceDirection * 10f);
+            }
             Rigidbody rb = GetComponent<Rigidbody>();
             if (rb != null)
             {

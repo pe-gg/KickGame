@@ -3266,18 +3266,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6990899059357931115, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
-      propertyPath: _wallJumpRadius
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 9073634661269645051, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
-      propertyPath: _speedCap
-      value: 12.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9073634661269645051, guid: 7fc0334f4d9957240a60afdeea85bce4, type: 3}
-      propertyPath: _movementSpeed
-      value: 40
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12939,6 +12927,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 3722667424027642207, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
+      propertyPath: playerAim
+      value: 
+      objectReference: {fileID: 1843688252}
     - target: {fileID: 4009116267968409412, guid: 6e84d5d01bd698f4b95f9308abed0431, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0

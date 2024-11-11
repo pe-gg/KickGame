@@ -124,4 +124,9 @@ public class PlayerJump : MonoBehaviour
         _jumpStarted = false;
         StopCoroutine("TempJumpDisable");
     }
+
+    public void JumpDisable()
+    {
+        StartCoroutine("TempJumpDisable");
+    }
 }
