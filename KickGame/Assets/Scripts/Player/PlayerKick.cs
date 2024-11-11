@@ -36,12 +36,14 @@ public class PlayerKick : MonoBehaviour
     [SerializeField] private AudioClip impactSound;
     [SerializeField] private float cameraShakeIntensity = 0.1f;
     [SerializeField] private float cameraShakeDuration = 0.2f;
-
+    
     private bool isKicking = false;
     private bool isDiveKicking = false;
     private float lastKickTime = -Mathf.Infinity;
     private float lastDiveKickTime = -Mathf.Infinity;
     private Vector3 diveKickDirection;
+
+    private bool LimitDiveKick = false;
 
     private Camera cam;
     private PlayerState state;
@@ -85,7 +87,9 @@ public class PlayerKick : MonoBehaviour
                 Rigidbody rbKickable = other.GetComponent<Rigidbody>();
                 if (rbKickable != null)
                 {
-                    rbKickable.AddForce(diveKickDirection * kickForce, ForceMode.Impulse);
+                    // Ensure the direction is clamped before applying force
+                    Vector3 clampedDirection = ClampDiveKickDirection(diveKickDirection);
+                    rbKickable.AddForce(clampedDirection * kickForce, ForceMode.Impulse);
                 }
 
                 // Bounce upwards
@@ -199,41 +203,66 @@ public class PlayerKick : MonoBehaviour
             return;
 
         // Check the player's view angle. Prevent divekick if looking too far upwards.
-        float camAngle = cam.transform.eulerAngles.x;
-        if (camAngle > 180f)
-            camAngle -= 360f; // Convert angle to -180 to 180 range
+        float camPitch = cam.transform.eulerAngles.x;
+        if (camPitch > 180f)
+            camPitch -= 360f; // Convert angle to -180 to 180 range
 
-        if (camAngle < maxDiveKickUpwardsAngle)
+        if (camPitch < maxDiveKickUpwardsAngle)
         {
             Debug.Log("Cannot divekick upwards beyond allowed angle.");
-            return;
-        }
-
-        // Find a target kickable object within acceptance parameters
-        FindDiveKickTarget();
-
-        // Set diveKickDirection towards the target or forward
-        if (lockedOnKickable != null)
-        {
-            // Cast to Component to access transform
-            Component kickableComponent = lockedOnKickable as Component;
-            if (kickableComponent != null)
-            {
-                diveKickDirection = (kickableComponent.transform.position - transform.position).normalized;
-            }
-            else
-            {
-                // Fallback if casting fails
-                diveKickDirection = cam.transform.forward;
-            }
+            LimitDiveKick = true;
+            
+            diveKickDirection = cam.transform.forward;
         }
         else
         {
-            diveKickDirection = cam.transform.forward;
+            // Find a target kickable object within acceptance parameters
+            FindDiveKickTarget();
+
+            // Set diveKickDirection towards the target or forward
+            if (lockedOnKickable != null)
+            {
+                // Cast to Component to access transform
+                Component kickableComponent = lockedOnKickable as Component;
+                if (kickableComponent != null)
+                {
+                    diveKickDirection = (kickableComponent.transform.position - transform.position).normalized;
+                }
+                else
+                {
+                    // Fallback if casting fails
+                    diveKickDirection = cam.transform.forward;
+                }
+            }
+            else
+            {
+                diveKickDirection = cam.transform.forward;
+            }
         }
+
+        // Clamp the diveKickDirection to prevent upward direction
+        diveKickDirection = ClampDiveKickDirection(diveKickDirection);
 
         StartCoroutine(DiveKickCoroutine());
         lastDiveKickTime = Time.time;
+    }
+
+    /// <summary>
+    /// Clamps the dive kick direction to ensure it's not upwards.
+    /// </summary>
+    /// <param name="direction">Original dive kick direction.</param>
+    /// <returns>Clamped dive kick direction.</returns>
+    private Vector3 ClampDiveKickDirection(Vector3 direction)
+    {
+        Vector3 clampedDir = direction.normalized;
+
+        if (clampedDir.y > 0)
+        {
+            clampedDir.y = 0;
+            clampedDir.Normalize();
+        }
+
+        return clampedDir;
     }
 
     /// <summary>
@@ -312,7 +341,8 @@ public class PlayerKick : MonoBehaviour
             if (inputDir.magnitude > 0)
             {
                 Vector3 adjustedDirection = Vector3.Lerp(diveKickDirection, (diveKickDirection + inputDir * 0.5f), Time.deltaTime * inputResponsiveness).normalized;
-                diveKickDirection = adjustedDirection;
+                // Clamp the adjusted direction to prevent upward direction
+                diveKickDirection = ClampDiveKickDirection(adjustedDirection);
             }
 
             elapsedTime += Time.deltaTime;
