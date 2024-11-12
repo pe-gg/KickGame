@@ -18,7 +18,7 @@ public class PlayerSpawn : MonoBehaviour
         if (_gm.InitialSpawnSet)
             return;
         _gm.InitialSpawnSet = true;
-        this.gameObject.transform.position = _player.transform.position;
+        //this.gameObject.transform.position = _player.transform.position;
         _gm.SpawnPoint = this.transform.position;
     }
 }

@@ -20,7 +20,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/LevelGym.unity
     guid: bb121b9139b0a194ab71c10f6545bdc9
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/GameEnd.unity
     guid: fee8caa0e3f1451419d3c70c9cbc4956
+  - enabled: 1
+    path: Assets/Scenes/Level3.unity
+    guid: a8cc248eb3fec4547b709912916d19a1
+  - enabled: 1
+    path: Assets/Scenes/Level2.unity
+    guid: 9af32d3663bd36c489fd270c69e135db
   m_configObjects: {}

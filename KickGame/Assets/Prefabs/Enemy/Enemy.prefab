@@ -810,7 +810,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   DetectionRadius: 15
-  FieldOfViewAngle: 110
+  FieldOfViewAngle: 360
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 128
